@@ -1,0 +1,31 @@
+/* BLACKTERM OS v10.1 — Threat Intelligence cinematic startup */
+.threat-map-shell{min-height:100%;position:relative}
+.threat-map-reveal{opacity:0;transform:scale(.985);filter:brightness(1.65) blur(3px);transition:opacity .65s ease,transform .75s cubic-bezier(.2,.8,.2,1),filter .8s ease}
+.threat-map-reveal.online{opacity:1;transform:scale(1);filter:none}
+.threat-startup{position:absolute;inset:-28px;z-index:30;display:grid;place-items:center;overflow:hidden;background:radial-gradient(circle at 50% 45%,rgba(25,94,165,.2),transparent 36%),#01050b;color:#eaf5ff;font-family:"Courier New",monospace}
+.startup-scanline{position:absolute;left:0;right:0;height:100px;background:linear-gradient(transparent,rgba(77,163,255,.08),transparent);animation:startupScan 2.7s linear infinite;pointer-events:none}
+@keyframes startupScan{from{top:-120px}to{top:100%}}
+.startup-noise{position:absolute;inset:0;opacity:.13;pointer-events:none;background:repeating-linear-gradient(0deg,transparent 0 3px,rgba(255,255,255,.025) 4px),repeating-linear-gradient(90deg,transparent 0 79px,rgba(77,163,255,.035) 80px)}
+.startup-topology{position:absolute;inset:8%;opacity:.07;transition:opacity .4s ease}
+.phase-4 .startup-topology,.phase-5 .startup-topology{opacity:.32}
+.startup-topology svg{width:100%;height:100%;overflow:visible}
+.startup-topology path{fill:rgba(77,163,255,.13);stroke:#4da3ff;stroke-width:.22;stroke-dasharray:1 1;animation:startupTopology 2.5s linear infinite}
+.startup-topology circle{fill:#c9e8ff;filter:drop-shadow(0 0 4px #4da3ff);animation:startupPulse 1.6s ease-in-out infinite}
+@keyframes startupTopology{to{stroke-dashoffset:-10}}
+@keyframes startupPulse{50%{opacity:.25}}
+.startup-console{position:relative;width:min(600px,calc(100% - 42px));padding:34px;border:1px solid rgba(77,163,255,.28);background:rgba(2,9,18,.9);box-shadow:0 30px 100px #000,0 0 45px rgba(77,163,255,.08);border-radius:12px}
+.startup-emblem{display:flex;align-items:center;gap:12px;margin-bottom:22px}.startup-emblem span{width:48px;height:48px;display:grid;place-items:center;border:1px solid #4da3ff;transform:rotate(45deg);color:#8bceff;font-weight:900;box-shadow:0 0 20px rgba(77,163,255,.25)}.startup-emblem span:after{content:"BT";transform:rotate(-45deg)}.startup-emblem span{font-size:0}.startup-emblem i{height:1px;flex:1;background:linear-gradient(90deg,#4da3ff,transparent)}.startup-emblem b{font-size:.62rem;letter-spacing:.15em;color:#4da3ff}
+.startup-console>small{color:#4da3ff;font:700 .62rem monospace;letter-spacing:.18em}.startup-console h2{margin:8px 0 24px;font-size:1.45rem;letter-spacing:.03em}
+.startup-terminal{height:148px;border:1px solid rgba(255,255,255,.07);background:#01050a;padding:13px;overflow:hidden}
+.startup-terminal p{display:grid;grid-template-columns:28px 1fr 30px;gap:8px;margin:0 0 8px;color:#8ba7bf;font-size:.7rem}.startup-terminal p span{color:#416989}.startup-terminal p b{color:#57dca3;font-size:.58rem}.startup-terminal p i{color:#7ec3ff;font-style:normal;animation:startupCursor .6s step-end infinite}.startup-terminal p.glitching{color:#d9efff;text-shadow:2px 0 #4da3ff,-2px 0 #916cff}
+@keyframes startupCursor{50%{opacity:0}}
+.startup-progress{height:4px;background:#071321;margin-top:16px;overflow:hidden}.startup-progress i{display:block;height:100%;background:#4da3ff;box-shadow:0 0 16px #4da3ff;transition:width .35s ease}
+.startup-meta{display:flex;justify-content:space-between;margin-top:7px;color:#54738f;font:700 .58rem monospace}.startup-meta b{color:#5bdca5}
+.startup-sound{position:absolute;right:18px;top:18px;border:1px solid rgba(77,163,255,.25);background:rgba(77,163,255,.07);color:#76baff;border-radius:5px;padding:6px 8px;font:700 .55rem monospace}
+.startup-flash{position:absolute;inset:0;background:#8bceff;mix-blend-mode:screen;animation:startupFlash .6s ease forwards;pointer-events:none}
+@keyframes startupFlash{0%{opacity:0}20%{opacity:.85}100%{opacity:0}}
+.threat-audio-toggle.active{color:#59dca2!important;border-color:rgba(89,220,162,.3)!important;background:rgba(89,220,162,.08)!important}
+.packet-dot{fill:#d8efff;filter:url(#btGlow);opacity:.92}
+.map-legend em{width:5px;height:5px;border-radius:50%;background:#d8efff;box-shadow:0 0 7px var(--accent)}
+@media(max-width:600px){.startup-console{padding:24px}.startup-console h2{font-size:1.15rem}.startup-terminal{height:135px}.threat-startup{inset:-18px}}
+@media(prefers-reduced-motion:reduce){.startup-scanline,.startup-topology path,.startup-topology circle,.startup-terminal p i,.startup-flash,.threat-routes path,.node-wave{animation:none!important}.threat-map-reveal{transition:none}}

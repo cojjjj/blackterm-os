@@ -1,55 +1,54 @@
-# BLACKTERM OS v3
+# BLACKTERM OS v10.1 — Cinematic Threat Intelligence
 
-An interactive operating-system-style cybersecurity portfolio for Tyler Deppa.
+This polish update upgrades the existing v10 Threat Map with:
 
-## Highlights
-- Animated BIOS boot and secure login
-- Draggable/minimizable/maximizable application windows
-- Electric-blue workstation theme plus cyan/violet options
-- Real resume PDF viewer and download
-- Project archive, career timeline, skills monitor, certifications
-- File Explorer and hidden `/root/interview` recruiter file
-- SOC-style Security Center with animated telemetry
-- Public GitHub API repository panel with offline fallback
-- TryHackMe achievement snapshot (clearly labeled as portfolio data)
-- Rule-based Assistant.exe for portfolio questions
-- Expanded terminal with root and Matrix easter eggs
-- Desktop status widgets, Start menu, taskbar, notifications, and gallery
+- Multi-stage typed startup sequence
+- Global topology loading animation
+- Progress states and secure-boot console
+- Brief decrypting glitch
+- Final blue flash and dashboard reveal
+- Animated packets traveling along attack routes
+- Optional deep ambient hum
+- Radar ping roughly every 9.5 seconds
+- Audio on/off controls
+- Updated BLACKTERM OS v10.1 labels
+- Threat Intelligence included in the main OS boot inventory
+- Automatic backups before changing files
 
-## Run
+## Install
+
+Extract this folder, open PowerShell in it, and run:
+
 ```powershell
-cd "$HOME\Desktop\blackterm-os-portfolio"
-npm.cmd install
+python .\install_v10_1.py "C:\Users\tyler\Desktop\blackterm-os-portfolio"
+```
+
+Then:
+
+```powershell
+cd "C:\Users\tyler\Desktop\blackterm-os-portfolio"
+npm.cmd run build
 npm.cmd run dev
 ```
 
-Open the Local URL shown by Vite, normally `http://localhost:5173`.
+## Deploy
 
-## Build
 ```powershell
-npm.cmd run build
+git add .
+git commit -m "Add cinematic Threat Intelligence startup"
+git push
 ```
 
-## Customize
-- Profile/projects/skills/certifications: `src/data/portfolio.ts`
-- Main OS behavior: `src/App.tsx`
-- Styling: `src/styles.css`
-- Resume: `public/Tyler-Deppa-Resume.pdf`
+## Backups
 
+The installer creates:
 
-## v4 Custom Icon Pack
+```text
+.blackterm-backups/
+```
 
-Every installed application now uses its own locally bundled SVG image in `public/icons/`. The icons appear consistently on the desktop, Start menu, taskbar, and window title bars. They require no external image host and can be recolored or replaced independently.
+inside the main project before replacing anything.
 
-## v5 icon system
+## Audio
 
-Version 5 includes a completely redrawn local SVG application pack. Every desktop app now has distinct artwork rather than a shared generic symbol. The same images are reused consistently in desktop shortcuts, the Start menu, taskbar buttons, and window title bars. All assets live in `public/icons` and require no external image service.
-
-## v8.0 Living Desktop
-
-Adds ambient particles, cursor lighting, glass blur, premium shadows, dock physics, generated ambient sound, persistent effect controls, and reduced-motion support.
-
-
-## BLACKTERM AI v2
-
-The Assistant.exe app is a grounded local portfolio assistant. It can answer questions about Tyler, explain projects, filter Python and Docker work, summarize skills and experience, present a recruiter-focused hiring case, and open related BLACKTERM OS applications. It includes suggested prompts, quick actions, optional browser speech synthesis, conversation memory for the current session, a visible knowledge-status panel, and a hidden developer mode triggered by asking for `developer mode`.
+Browsers can restrict audio until the visitor interacts with the page. Since the map is opened through a click, it should normally start. The dashboard also includes an AUDIO ON/OFF button.
