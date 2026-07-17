@@ -1,0 +1,25 @@
+/* BLACKTERM OS v11.1 — Home Lab polish pass */
+.polished-lab .lab-topology{min-height:500px}
+.polished-lab .virtual-rack-frame{position:absolute;left:5%;right:5%;top:62%;bottom:4%;border:1px solid rgba(77,163,255,.12);border-radius:14px;background:linear-gradient(180deg,rgba(77,163,255,.025),rgba(2,8,18,.18));box-shadow:inset 0 0 40px rgba(77,163,255,.025);pointer-events:none}
+.polished-lab .virtual-rack-label{position:absolute;left:7%;right:7%;top:63.5%;display:flex;justify-content:space-between;color:#587590;font:700 .48rem monospace;letter-spacing:.15em;z-index:2;pointer-events:none}
+.polished-lab .virtual-rack-label b{color:var(--accent)}
+.polished-lab .lab-node.wide-node{width:170px;min-height:74px;border-color:var(--accent-line);background:linear-gradient(145deg,var(--accent-soft),rgba(3,11,23,.96))}
+.polished-lab .lab-node i{display:flex;align-items:center;gap:5px}
+.polished-lab .lab-node i em{width:6px;height:6px;border-radius:50%;background:currentColor;box-shadow:0 0 8px currentColor;animation:labLed 1.45s ease-in-out infinite}
+@keyframes labLed{50%{opacity:.35;transform:scale(.8)}}
+.polished-lab .lab-links path{transition:stroke .25s,opacity .25s,stroke-width .25s}
+.polished-lab .lab-links path.highlighted{stroke:#d9efff;opacity:1;stroke-width:.5;filter:url(#labGlow)}
+.polished-lab .lab-packets circle{transition:r .2s}
+.polished-lab .lab-packets circle.highlighted{fill:#fff;filter:url(#labGlow)}
+.polished-lab .lab-node{transition:border-color .2s,background .2s,box-shadow .2s,filter .2s}
+.polished-lab .lab-node.selected{filter:brightness(1.14)}
+.polished-lab .lab-node.selected:after{content:"";position:absolute;inset:-6px;border:1px solid var(--accent-line);border-radius:12px;animation:selectedPulse 1.7s ease-out infinite;pointer-events:none}
+@keyframes selectedPulse{0%{opacity:.75;transform:scale(.97)}100%{opacity:0;transform:scale(1.08)}}
+.telemetry-route{border:1px solid rgba(87,220,163,.18);background:rgba(87,220,163,.055);border-radius:8px;padding:10px;margin-bottom:10px}
+.telemetry-route>small{display:block;color:#57dca3;font:700 .5rem monospace;letter-spacing:.12em;margin-bottom:8px}
+.telemetry-route>div{display:flex;align-items:center;justify-content:space-between;gap:4px;flex-wrap:wrap}
+.telemetry-route span{border:1px solid rgba(87,220,163,.22);background:rgba(87,220,163,.07);border-radius:4px;padding:4px 5px;color:#b9f3dc;font:700 .47rem monospace}
+.telemetry-route b{color:#57dca3;font:700 .58rem monospace;animation:routeBlink .9s ease-in-out infinite}
+@keyframes routeBlink{50%{opacity:.25}}
+@media(max-width:780px){.polished-lab .lab-topology{min-height:540px}.polished-lab .lab-node.wide-node{width:145px}.polished-lab .virtual-rack-label{top:62.5%}}
+@media(max-width:520px){.polished-lab .lab-node{width:88px}.polished-lab .lab-node.wide-node{width:125px}.polished-lab .virtual-rack-frame{left:2%;right:2%}.polished-lab .virtual-rack-label{left:4%;right:4%;font-size:.42rem}}

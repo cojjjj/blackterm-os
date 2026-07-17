@@ -1,54 +1,39 @@
-# BLACKTERM OS v10.1 — Cinematic Threat Intelligence
+# BLACKTERM OS v13.1 — Draggable Persistent Desktop
 
-This polish update upgrades the existing v10 Threat Map with:
+Adds:
 
-- Multi-stage typed startup sequence
-- Global topology loading animation
-- Progress states and secure-boot console
-- Brief decrypting glitch
-- Final blue flash and dashboard reveal
-- Animated packets traveling along attack routes
-- Optional deep ambient hum
-- Radar ping roughly every 9.5 seconds
-- Audio on/off controls
-- Updated BLACKTERM OS v10.1 labels
-- Threat Intelligence included in the main OS boot inventory
-- Automatic backups before changing files
+- Drag-and-drop desktop icons
+- Free icon positioning
+- Apps dragged from Start to the desktop
+- Plus button to add Start-menu apps as shortcuts
+- Right-click an icon to remove it
+- Align and Reset controls
+- Layout persistence using localStorage
+- Positions survive refreshes and future visits
+- Automatic backups
 
-## Install
-
-Extract this folder, open PowerShell in it, and run:
+## Install when files are inside the main project
 
 ```powershell
-python .\install_v10_1.py "C:\Users\tyler\Desktop\blackterm-os-portfolio"
-```
-
-Then:
-
-```powershell
-cd "C:\Users\tyler\Desktop\blackterm-os-portfolio"
+python .\install_desktop_layout.py .
 npm.cmd run build
 npm.cmd run dev
 ```
+
+## Controls
+
+- Drag a desktop icon to move it.
+- Double-click it to open.
+- Right-click it to remove the shortcut.
+- Drag an app from Start onto the desktop.
+- Press `＋` beside an app in Start to add it.
+- Use `ALIGN` to organize icons.
+- Use `RESET` to restore the default desktop.
 
 ## Deploy
 
 ```powershell
 git add .
-git commit -m "Add cinematic Threat Intelligence startup"
+git commit -m "Add draggable persistent desktop shortcuts"
 git push
 ```
-
-## Backups
-
-The installer creates:
-
-```text
-.blackterm-backups/
-```
-
-inside the main project before replacing anything.
-
-## Audio
-
-Browsers can restrict audio until the visitor interacts with the page. Since the map is opened through a click, it should normally start. The dashboard also includes an AUDIO ON/OFF button.
