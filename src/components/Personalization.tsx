@@ -1,7 +1,7 @@
 import React from 'react';
 
 export type ThemeName = 'blue'|'cyan'|'violet'|'green'|'red'|'amber'|'ghost';
-export type WallpaperName = 'grid'|'void'|'circuit'|'nebula'|'minimal'|'exclusive';
+export type WallpaperName = 'grid'|'void'|'circuit'|'nebula'|'minimal'|'singularity'|'ghost-protocol'|'midnight-override'|'core-breach'|'lost-transmission'|'terminal-world'|'red-vector'|'frozen-signal'|'archive'|'rogue-shadow';
 export type VisualEffects = {
   particles:boolean;
   glass:boolean;
@@ -38,7 +38,23 @@ const themes:[ThemeName,string,string][]=[
   ['cyan','Arctic Signal','#46e5ef'],
   ['ghost','Ghost White','#d8efff']
 ];
-const wallpapers:[WallpaperName,string][]=[['grid','Tactical Grid'],['void','Deep Void'],['circuit','Circuit Mesh'],['nebula','Signal Nebula'],['minimal','Blackout'],['exclusive','Exclusive Collection']];
+const wallpapers:[WallpaperName,string][]=[
+  ['grid','Tactical Grid'],
+  ['void','Deep Void'],
+  ['circuit','Circuit Mesh'],
+  ['nebula','Signal Nebula'],
+  ['minimal','Blackout'],
+  ['singularity','Void Singularity'],
+  ['ghost-protocol','Ghost Protocol'],
+  ['midnight-override','Midnight Override'],
+  ['core-breach','Core Breach'],
+  ['lost-transmission','Lost Transmission'],
+  ['terminal-world','Terminal World'],
+  ['red-vector','Red Vector'],
+  ['frozen-signal','Frozen Signal'],
+  ['archive','The Archive'],
+  ['rogue-shadow','Rogue Shadow']
+];
 
 export default function Personalization({theme,setTheme,matrix,setMatrix,effects,setEffects}:Props){
   const patch=(change:Partial<VisualEffects>)=>setEffects(current=>({...current,...change}));
