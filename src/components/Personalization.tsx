@@ -16,6 +16,8 @@ export type VisualEffects = {
   scanlineStrength:number;
   iconScale:number;
   wallpaper:WallpaperName;
+  randomColors:boolean;
+  randomSpeed:number;
 };
 
 type Props={
@@ -43,13 +45,13 @@ export default function Personalization({theme,setTheme,matrix,setMatrix,effects
   const reset=()=>{
     setTheme('violet');
     setMatrix(false);
-    setEffects({particles:true,glass:true,sound:false,scanlines:true,flicker:false,cursorTrail:true,radar:true,noise:true,glow:70,transparency:94,scanlineStrength:35,iconScale:100,wallpaper:'grid'});
+    setEffects({particles:true,glass:true,sound:false,scanlines:true,flicker:false,cursorTrail:true,radar:true,noise:true,glow:70,transparency:94,scanlineStrength:35,iconScale:100,wallpaper:'grid',randomColors:false,randomSpeed:2500});
   };
   return <div className="personalization-app">
     <div className="section-title"><div><small>BLACKTERM PERSONALIZATION</small><h2>Customization Center</h2></div><span>LIVE PREVIEW • AUTO SAVED</span></div>
     <div className="personalization-layout">
       <section className="personalization-controls">
-        <div className="custom-section"><header><div><small>01 / COLOR SYSTEM</small><h3>Accent themes</h3></div></header><div className="preset-grid">{themes.map(([id,label,color])=><button key={id} className={theme===id?'active':''} onClick={()=>setTheme(id)} style={{'--swatch':color} as React.CSSProperties}><i/><span>{label}</span><b>{theme===id?'ACTIVE':'APPLY'}</b></button>)}</div></div>
+        <div className="custom-section"><header><div><small>01 / COLOR SYSTEM</small><h3>Accent themes</h3></div></header><div className="preset-grid">{themes.map(([id,label,color])=><button key={id} className={theme===id&&!effects.randomColors?'active':''} onClick={()=>{patch({randomColors:false});setTheme(id)}} style={{'--swatch':color} as React.CSSProperties}><i/><span>{label}</span><b>{theme===id&&!effects.randomColors?'ACTIVE':'APPLY'}</b></button>)}<button className={`random-spectrum ${effects.randomColors?'active':''}`} onClick={()=>patch({randomColors:!effects.randomColors})} style={{'--swatch':'linear-gradient(90deg,#ff596f,#f3b84b,#43ef9e,#46e5ef,#4da3ff,#a880ff)'} as React.CSSProperties}><i/><span>Random Spectrum</span><b>{effects.randomColors?'CYCLING':'ENABLE'}</b></button></div>{effects.randomColors&&<div className="random-speed"><label><span>Color cycle speed <b>{(effects.randomSpeed/1000).toFixed(1)}s</b></span><input type="range" min="800" max="6000" step="100" value={effects.randomSpeed} onChange={e=>patch({randomSpeed:Number(e.target.value)})}/></label><p>BLACKTERM OS will continuously rotate through every accent theme.</p></div>}</div>
         <div className="custom-section"><header><div><small>02 / DESKTOP ENVIRONMENT</small><h3>Wallpaper</h3></div></header><div className="wallpaper-options">{wallpapers.map(([id,label])=><button key={id} className={`${id} ${effects.wallpaper===id?'active':''}`} onClick={()=>patch({wallpaper:id})}><i/><span>{label}</span></button>)}</div></div>
         <div className="custom-section"><header><div><small>03 / VISUAL ENGINE</small><h3>Effects</h3></div></header><div className="toggle-grid">
           {([
@@ -67,7 +69,7 @@ export default function Personalization({theme,setTheme,matrix,setMatrix,effects
       </section>
       <aside className="personalization-preview">
         <div className={`preview-monitor wallpaper-${effects.wallpaper} theme-${theme}`}><div className="preview-grid"/><div className="preview-window"><header><span>◈</span>BLACKTERM PREVIEW <b>— □ ×</b></header><section><small>THEME ONLINE</small><h3>{themes.find(item=>item[0]===theme)?.[1]||theme}</h3><p>Windows, controls, telemetry, icons, and system highlights update instantly.</p><button>ACTIVE SIGNAL</button></section></div><div className="preview-taskbar"><b>BT</b><i/><i/><i/><span>17:26</span></div></div>
-        <div className="preview-stats"><div><span>ACCENT</span><b>{String(theme).toUpperCase()}</b></div><div><span>WALLPAPER</span><b>{effects.wallpaper.toUpperCase()}</b></div><div><span>EFFECTS</span><b>{Object.entries(effects).filter(([,v])=>v===true).length + (matrix?1:0)} ACTIVE</b></div></div>
+        <div className="preview-stats"><div><span>ACCENT</span><b>{effects.randomColors?'RANDOM':String(theme).toUpperCase()}</b></div><div><span>WALLPAPER</span><b>{effects.wallpaper.toUpperCase()}</b></div><div><span>EFFECTS</span><b>{Object.entries(effects).filter(([,v])=>v===true).length + (matrix?1:0)} ACTIVE</b></div></div>
         <p className="custom-note">Your configuration is stored locally in this browser and restored the next time BLACKTERM OS starts.</p>
       </aside>
     </div>

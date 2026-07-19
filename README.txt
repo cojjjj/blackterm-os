@@ -1,18 +1,16 @@
-BLACKTERM OS desktop icon free-movement fix
+BLACKTERM OS v13.3.1 — RANDOM SPECTRUM
 
 Replace:
-- src/components/DesktopWorkspace.tsx
-- src/styles.css
-- desktop-layout.css
+  src/App.tsx
+  src/styles.css
+  src/components/Personalization.tsx
 
-This version:
-- uses translate3d(x,y) instead of CSS top/left
-- captures the pointer during dragging
-- measures the actual desktop client height
-- resets the saved layout using a v2 storage key
+Then run:
+  npm.cmd run build
+  git add .
+  git commit -m "Add Random Spectrum color cycling"
+  git push
 
-After replacement run:
-npm.cmd run build
-git add .
-git commit -m "Fix unrestricted desktop icon movement"
-git push
+Open Settings > Accent themes > Random Spectrum.
+Use the speed slider to choose a cycle from 0.8 to 6.0 seconds.
+Selecting any fixed theme automatically disables Random Spectrum.
