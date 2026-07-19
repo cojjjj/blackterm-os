@@ -19,6 +19,7 @@ export type VisualEffects = {
   randomColors:boolean;
   randomSpeed:number;
   liveWallpaper:boolean;
+  timeCycle:boolean;
 };
 
 type Props={
@@ -62,7 +63,7 @@ export default function Personalization({theme,setTheme,matrix,setMatrix,effects
   const reset=()=>{
     setTheme('violet');
     setMatrix(false);
-    setEffects({particles:true,glass:true,sound:false,scanlines:true,flicker:false,cursorTrail:true,radar:true,noise:true,glow:70,transparency:94,scanlineStrength:35,iconScale:100,wallpaper:'grid',randomColors:false,randomSpeed:2500,liveWallpaper:true});
+    setEffects({particles:true,glass:true,sound:false,scanlines:true,flicker:false,cursorTrail:true,radar:true,noise:true,glow:70,transparency:94,scanlineStrength:35,iconScale:100,wallpaper:'grid',randomColors:false,randomSpeed:2500,liveWallpaper:true,timeCycle:true});
   };
   return <div className="personalization-app">
     <div className="section-title"><div><small>BLACKTERM PERSONALIZATION</small><h2>Customization Center</h2></div><span>LIVE PREVIEW • AUTO SAVED</span></div>
@@ -72,7 +73,7 @@ export default function Personalization({theme,setTheme,matrix,setMatrix,effects
         <div className="custom-section"><header><div><small>02 / DESKTOP ENVIRONMENT</small><h3>Wallpaper</h3></div></header><div className="wallpaper-options">{wallpapers.map(([id,label])=><button key={id} className={`${id} ${effects.wallpaper===id?'active':''}`} onClick={()=>patch({wallpaper:id})}><i/><span>{label}</span></button>)}</div></div>
         <div className="custom-section"><header><div><small>03 / VISUAL ENGINE</small><h3>Effects</h3></div></header><div className="toggle-grid">
           {([
-            ['particles','Ambient particles'],['liveWallpaper','Live wallpaper'],['glass','Glass blur'],['scanlines','CRT scanlines'],['flicker','Screen flicker'],['cursorTrail','Cursor aura'],['radar','Radar sweep'],['noise','Signal noise']
+            ['particles','Ambient particles'],['liveWallpaper','Live wallpaper'],['timeCycle','Dynamic day / night'],['glass','Glass blur'],['scanlines','CRT scanlines'],['flicker','Screen flicker'],['cursorTrail','Cursor aura'],['radar','Radar sweep'],['noise','Signal noise']
           ] as const).map(([key,label])=><button key={key} className={effects[key]?'on':''} onClick={()=>patch({[key]:!effects[key]})}><span>{label}</span><b>{effects[key]?'ON':'OFF'}</b></button>)}
           <button className={matrix?'on':''} onClick={()=>setMatrix(!matrix)}><span>Matrix rain</span><b>{matrix?'ON':'OFF'}</b></button>
         </div></div>

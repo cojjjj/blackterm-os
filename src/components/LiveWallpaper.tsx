@@ -1,8 +1,19 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import type { WallpaperName } from './Personalization';
 
-type Props={ wallpaper:WallpaperName; enabled:boolean; activeApp?:string };
+type Props={ wallpaper:WallpaperName; enabled:boolean; activeApp?:string; timeCycle?:boolean };
 type Dot={x:number;y:number;vx:number;vy:number;r:number;a:number};
+
+type TimePhase='dawn'|'day'|'dusk'|'night'|'midnight';
+function getTimePhase(date=new Date()):TimePhase{
+  const h=date.getHours();
+  if(h>=5&&h<8)return 'dawn';
+  if(h>=8&&h<17)return 'day';
+  if(h>=17&&h<20)return 'dusk';
+  if(h>=0&&h<3)return 'midnight';
+  return 'night';
+}
+const phaseLabels:Record<TimePhase,string>={dawn:'DAWN LINK',day:'DAYLIGHT MODE',dusk:'DUSK TRANSITION',night:'NIGHT OPERATIONS',midnight:'MIDNIGHT PROTOCOL'};
 
 const sceneNames=new Set(['singularity','ghost-protocol','midnight-override','core-breach','lost-transmission','terminal-world','red-vector','frozen-signal','archive','rogue-shadow']);
 const labels:Record<string,string[]>={
@@ -33,20 +44,30 @@ function palette(scene:string){
   return [175,70,255];
 }
 
-export default function LiveWallpaper({wallpaper,enabled,activeApp}:Props){
+export default function LiveWallpaper({wallpaper,enabled,activeApp,timeCycle=true}:Props){
   const canvasRef=useRef<HTMLCanvasElement|null>(null);
   const [eventId,setEventId]=useState(0);
   const [message,setMessage]=useState('');
+  const [phase,setPhase]=useState<TimePhase>(()=>getTimePhase());
   const supported=sceneNames.has(wallpaper);
-  const intensity=activeApp==='incident'||activeApp==='sandbox'?1.6:activeApp==='threatmap'?1.35:activeApp==='terminal'?1.25:1;
+  const timeIntensity=!timeCycle?1:phase==='midnight'?1.18:phase==='night'?1.08:phase==='dawn'||phase==='dusk'?1.04:.92;
+  const intensity=(activeApp==='incident'||activeApp==='sandbox'?1.6:activeApp==='threatmap'?1.35:activeApp==='terminal'?1.25:1)*timeIntensity;
   const seeds=useMemo(()=>Array.from({length:70},()=>({x:Math.random(),y:Math.random(),vx:(Math.random()-.5)*.00018,vy:(Math.random()-.5)*.00018,r:.5+Math.random()*1.8,a:.15+Math.random()*.65})),[wallpaper]);
+
+  useEffect(()=>{
+    if(!timeCycle)return;
+    const update=()=>setPhase(getTimePhase());
+    update();
+    const timer=window.setInterval(update,60000);
+    return()=>window.clearInterval(timer);
+  },[timeCycle]);
 
   useEffect(()=>{
     if(!enabled||!supported)return;
     let timer=0;
-    const schedule=()=>{timer=window.setTimeout(()=>{const pool=labels[wallpaper]||['SIGNAL EVENT'];setMessage(pool[Math.floor(Math.random()*pool.length)]);setEventId(v=>v+1);schedule();},9000+Math.random()*16000)};
+    const schedule=()=>{timer=window.setTimeout(()=>{const base=labels[wallpaper]||['SIGNAL EVENT'];const midnightPool=['MIDNIGHT TRANSMISSION RECEIVED','OBSERVER CHANNEL OPEN','UNKNOWN NODE AT 00:00','ARCHIVE GHOST SIGNAL'];const pool=timeCycle&&phase==='midnight'&&Math.random()<.38?[...base,...midnightPool]:base;setMessage(pool[Math.floor(Math.random()*pool.length)]);setEventId(v=>v+1);schedule();},9000+Math.random()*16000)};
     schedule();return()=>window.clearTimeout(timer);
-  },[enabled,wallpaper,supported]);
+  },[enabled,wallpaper,supported,timeCycle,phase]);
 
   useEffect(()=>{
     if(!enabled||!supported)return;
@@ -101,12 +122,12 @@ export default function LiveWallpaper({wallpaper,enabled,activeApp}:Props){
   },[enabled,supported,wallpaper,seeds,intensity]);
 
   if(!enabled||!supported)return null;
-  return <div className={`live-wallpaper scene-engine scene-${wallpaper} reactive-${activeApp||'desktop'}`} aria-hidden="true">
+  return <div className={`live-wallpaper scene-engine scene-${wallpaper} reactive-${activeApp||'desktop'} ${timeCycle?`time-${phase}`:'time-static'}`} aria-hidden="true">
     <div className="scene-art" style={{backgroundImage:`url(${art[wallpaper]})`}}/>
     <canvas ref={canvasRef}/>
     <div className="scene-depth scene-depth-back"/><div className="scene-depth scene-depth-front"/>
     <div className="scene-crt"/><div className="scene-vignette-v2"/>
     <div key={eventId} className="scene-event-v2"><b>{message}</b></div>
-    <div className="scene-hud-v2"><span>BLACKTERM // SCENE ENGINE</span><b>{wallpaper.replaceAll('-',' ').toUpperCase()}</b><em>{activeApp?`REACTIVE LINK // ${activeApp.toUpperCase()}`:'ENVIRONMENT STABLE'}</em></div>
+    <div className="scene-hud-v2"><span>BLACKTERM // SCENE ENGINE</span><b>{wallpaper.replaceAll('-',' ').toUpperCase()}</b><em>{activeApp?`REACTIVE LINK // ${activeApp.toUpperCase()}`:'ENVIRONMENT STABLE'} • {timeCycle?phaseLabels[phase]:'TIME CYCLE OFF'}</em></div>
   </div>
 }
