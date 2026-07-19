@@ -379,3 +379,26 @@
 .scene-engine.time-dawn .scene-depth-front{background:linear-gradient(90deg,rgba(0,0,0,.76) 0%,rgba(0,0,0,.40) 24%,transparent 52%,rgba(0,0,0,.22) 78%,rgba(0,0,0,.55) 100%)}
 .scene-engine.time-day .scene-depth-front{background:linear-gradient(90deg,rgba(0,0,0,.73) 0%,rgba(0,0,0,.35) 24%,transparent 52%,rgba(0,0,0,.19) 78%,rgba(0,0,0,.48) 100%)}
 .scene-engine.time-dusk .scene-depth-front,.scene-engine.time-night .scene-depth-front,.scene-engine.time-midnight .scene-depth-front{background:linear-gradient(90deg,rgba(0,0,0,.86) 0%,rgba(0,0,0,.50) 24%,transparent 52%,rgba(0,0,0,.33) 78%,rgba(0,0,0,.72) 100%)}
+
+/* BLACKTERM OS v14.2 — Evolving Midnight Override */
+.scene-midnight-override .midnight-fog{position:absolute;z-index:2;left:28%;right:10%;height:28%;bottom:8%;opacity:.12;filter:blur(38px);background:radial-gradient(ellipse at center,rgba(116,55,255,.55),transparent 68%);animation:midnightFog 24s ease-in-out infinite alternate}
+.scene-midnight-override .midnight-fog-b{bottom:28%;left:42%;opacity:.08;animation-duration:31s;animation-direction:alternate-reverse}
+.scene-midnight-override .midnight-drone{position:absolute;z-index:5;width:9px;height:3px;border-radius:999px;background:#d9c6ff;box-shadow:0 0 8px #9a6cff,0 0 16px #7040ff;opacity:0}
+.scene-midnight-override.evolution-2 .midnight-drone,.scene-midnight-override.evolution-3 .midnight-drone,.scene-midnight-override.evolution-4 .midnight-drone{opacity:.72}
+.scene-midnight-override .drone-a{top:22%;left:-4%;animation:droneCrossA 18s linear infinite}
+.scene-midnight-override .drone-b{top:34%;right:-4%;animation:droneCrossB 25s linear 7s infinite}
+.scene-midnight-override .midnight-terminal{position:absolute;z-index:6;padding:5px 8px;border-left:1px solid rgba(170,100,255,.55);background:linear-gradient(90deg,rgba(88,28,145,.22),transparent);color:#caa8ff;font:700 .43rem monospace;letter-spacing:.18em;text-shadow:0 0 10px #7f3cff;opacity:0;animation:terminalBlink 11s ease-in-out infinite}
+.scene-midnight-override.evolution-3 .midnight-terminal,.scene-midnight-override.evolution-4 .midnight-terminal{opacity:.48}
+.scene-midnight-override .terminal-a{left:48%;top:28%}.scene-midnight-override .terminal-b{left:68%;top:49%;animation-delay:-4s}
+.scene-midnight-override .midnight-tower-pulse{position:absolute;z-index:2;left:50.5%;top:7%;width:2px;height:58%;background:linear-gradient(180deg,rgba(190,130,255,.85),rgba(100,50,255,.16),transparent);box-shadow:0 0 10px #9d64ff,0 0 35px rgba(130,70,255,.45);opacity:.12;transform-origin:top;animation:towerPulse 7s ease-in-out infinite}
+.scene-midnight-override.evolution-1 .midnight-tower-pulse{opacity:.25}.scene-midnight-override.evolution-2 .midnight-tower-pulse{opacity:.38}.scene-midnight-override.evolution-3 .midnight-tower-pulse,.scene-midnight-override.evolution-4 .midnight-tower-pulse{opacity:.58}
+.scene-midnight-override.evolution-4 .scene-art{filter:saturate(1.08) contrast(1.16) brightness(.46)}
+.scene-midnight-override.evolution-4 .scene-depth-back{opacity:.32;animation-duration:6s}
+.scene-midnight-override.evolution-4 canvas{filter:brightness(1.18) saturate(1.18)}
+.scene-midnight-override.reactive-threatmap .midnight-tower-pulse{background:linear-gradient(180deg,rgba(255,45,85,.95),rgba(255,25,55,.18),transparent);box-shadow:0 0 12px #ff315e,0 0 38px rgba(255,30,70,.5)}
+.scene-midnight-override.reactive-terminal .midnight-terminal{opacity:.85!important;animation-duration:4s}.scene-midnight-override.reactive-sandbox .midnight-drone{filter:hue-rotate(290deg);animation-duration:8s}.scene-midnight-override.reactive-incident .scene-depth-back{background:radial-gradient(circle at 64% 46%,rgba(255,30,70,.25),transparent 35%)}
+@keyframes midnightFog{0%{transform:translate3d(-5%,2%,0) scale(1)}100%{transform:translate3d(7%,-4%,0) scale(1.14)}}
+@keyframes droneCrossA{0%{transform:translateX(0);opacity:0}8%,82%{opacity:.75}100%{transform:translateX(118vw);opacity:0}}
+@keyframes droneCrossB{0%{transform:translateX(0);opacity:0}10%,78%{opacity:.55}100%{transform:translateX(-118vw);opacity:0}}
+@keyframes terminalBlink{0%,72%,100%{opacity:0;transform:translateY(5px)}77%,90%{opacity:.55;transform:none}83%{clip-path:inset(0 0 45%);transform:translateX(2px)}85%{clip-path:inset(48% 0 0);transform:translateX(-2px)}}
+@keyframes towerPulse{0%,100%{transform:scaleY(.94);filter:brightness(.8)}50%{transform:scaleY(1.04);filter:brightness(1.6)}}

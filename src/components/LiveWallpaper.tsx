@@ -49,10 +49,40 @@ export default function LiveWallpaper({wallpaper,enabled,activeApp,timeCycle=tru
   const [eventId,setEventId]=useState(0);
   const [message,setMessage]=useState('');
   const [phase,setPhase]=useState<TimePhase>(()=>getTimePhase());
+  const [evolution,setEvolution]=useState(()=>Number(sessionStorage.getItem('bt-scene-evolution')||0));
+  const visitedApps=useRef(new Set<string>());
   const supported=sceneNames.has(wallpaper);
   const timeIntensity=!timeCycle?1:phase==='midnight'?1.18:phase==='night'?1.08:phase==='dawn'||phase==='dusk'?1.04:.92;
   const intensity=(activeApp==='incident'||activeApp==='sandbox'?1.6:activeApp==='threatmap'?1.35:activeApp==='terminal'?1.25:1)*timeIntensity;
   const seeds=useMemo(()=>Array.from({length:70},()=>({x:Math.random(),y:Math.random(),vx:(Math.random()-.5)*.00018,vy:(Math.random()-.5)*.00018,r:.5+Math.random()*1.8,a:.15+Math.random()*.65})),[wallpaper]);
+
+
+  useEffect(()=>{
+    if(!enabled||!supported)return;
+    const started=Date.now();
+    const tick=()=>{
+      const elapsed=(Date.now()-started)/1000;
+      const appBonus=visitedApps.current.size*22;
+      const next=Math.min(4,Math.floor((elapsed+appBonus)/45));
+      setEvolution(prev=>{
+        const value=Math.max(prev,next);
+        sessionStorage.setItem('bt-scene-evolution',String(value));
+        return value;
+      });
+    };
+    const timer=window.setInterval(tick,5000);tick();
+    return()=>window.clearInterval(timer);
+  },[enabled,supported]);
+
+  useEffect(()=>{
+    if(!activeApp)return;
+    visitedApps.current.add(activeApp);
+    setEvolution(prev=>{
+      const value=Math.min(4,Math.max(prev,visitedApps.current.size));
+      sessionStorage.setItem('bt-scene-evolution',String(value));
+      return value;
+    });
+  },[activeApp]);
 
   useEffect(()=>{
     if(!timeCycle)return;
@@ -110,7 +140,19 @@ export default function LiveWallpaper({wallpaper,enabled,activeApp,timeCycle=tru
       } else if(wallpaper==='frozen-signal'){
         for(let i=0;i<40;i++){ctx.strokeStyle=`rgba(${r},${g},${b},${.06+(i%6)*.018})`;const x=(i*61+pulse*18)%w;ctx.beginPath();ctx.moveTo(x,-40);ctx.lineTo(x-70,h+40);ctx.stroke()}
       } else if(wallpaper==='midnight-override'){
-        for(let i=0;i<28;i++){const x=w*.36+i*36;const hh=80+(i*47)%260;ctx.fillStyle=`rgba(${r},${g},${b},${.035+(i%4)*.015})`;ctx.fillRect(x,h*.72-hh,28,hh)}
+        for(let i=0;i<34;i++){
+          const x=w*.31+i*34;const hh=80+(i*47)%300;
+          const awake=evolution>=1&&((i+Math.floor(pulse*.18))%5===0||i%7===0);
+          const flicker=awake?.08+.045*Math.max(0,Math.sin(pulse*1.4+i)):.025+(i%4)*.01;
+          ctx.fillStyle=`rgba(${r},${g},${b},${flicker})`;ctx.fillRect(x,h*.74-hh,27,hh);
+          if(awake){ctx.fillStyle=`rgba(220,190,255,${.18+.12*Math.sin(pulse*2+i)})`;for(let wy=h*.74-hh+15;wy<h*.73;wy+=18){if((Math.floor(wy/18)+i)%3===0)ctx.fillRect(x+5,wy,4,2)}}
+        }
+        if(evolution>=2){
+          for(let i=0;i<2;i++){const travel=(pulse*(34+i*11))%(w*1.3)-w*.15;const y=h*(.18+i*.11)+Math.sin(pulse*.8+i)*20;ctx.fillStyle=`rgba(205,175,255,.75)`;ctx.fillRect(travel,y,7,2);ctx.strokeStyle=`rgba(${r},${g},${b},.16)`;ctx.beginPath();ctx.moveTo(travel-80,y);ctx.lineTo(travel,y);ctx.stroke()}
+        }
+        if(evolution>=3){
+          const sx=w*.60,sy=h*.15;ctx.save();ctx.translate(sx,sy);ctx.rotate(Math.sin(pulse*.18)*.35);const beam=ctx.createLinearGradient(0,0,0,h*.58);beam.addColorStop(0,`rgba(${r},${g},${b},.12)`);beam.addColorStop(1,'transparent');ctx.fillStyle=beam;ctx.beginPath();ctx.moveTo(-8,0);ctx.lineTo(145,h*.58);ctx.lineTo(20,h*.58);ctx.closePath();ctx.fill();ctx.restore();
+        }
       } else if(wallpaper==='rogue-shadow'){
         const x=w*.70+Math.sin(pulse*.35)*24,y=h*.46;const grad=ctx.createRadialGradient(x,y,0,x,y,240);grad.addColorStop(0,`rgba(255,255,255,${.055+.025*Math.sin(pulse)})`);grad.addColorStop(1,'transparent');ctx.fillStyle=grad;ctx.fillRect(x-240,y-240,480,480);
       }
@@ -122,12 +164,13 @@ export default function LiveWallpaper({wallpaper,enabled,activeApp,timeCycle=tru
   },[enabled,supported,wallpaper,seeds,intensity]);
 
   if(!enabled||!supported)return null;
-  return <div className={`live-wallpaper scene-engine scene-${wallpaper} reactive-${activeApp||'desktop'} ${timeCycle?`time-${phase}`:'time-static'}`} aria-hidden="true">
+  return <div className={`live-wallpaper scene-engine scene-${wallpaper} reactive-${activeApp||'desktop'} evolution-${evolution} ${timeCycle?`time-${phase}`:'time-static'}`} aria-hidden="true">
     <div className="scene-art" style={{backgroundImage:`url(${art[wallpaper]})`}}/>
     <canvas ref={canvasRef}/>
     <div className="scene-depth scene-depth-back"/><div className="scene-depth scene-depth-front"/>
+    {wallpaper==='midnight-override'&&<><div className="midnight-fog midnight-fog-a"/><div className="midnight-fog midnight-fog-b"/><div className="midnight-drone drone-a"/><div className="midnight-drone drone-b"/><div className="midnight-terminal terminal-a">NODE_07 // ONLINE</div><div className="midnight-terminal terminal-b">UPLINK ESTABLISHED</div><div className="midnight-tower-pulse"/></>}
     <div className="scene-crt"/><div className="scene-vignette-v2"/>
     <div key={eventId} className="scene-event-v2"><b>{message}</b></div>
-    <div className="scene-hud-v2"><span>BLACKTERM // SCENE ENGINE</span><b>{wallpaper.replaceAll('-',' ').toUpperCase()}</b><em>{activeApp?`REACTIVE LINK // ${activeApp.toUpperCase()}`:'ENVIRONMENT STABLE'} • {timeCycle?phaseLabels[phase]:'TIME CYCLE OFF'}</em></div>
+    <div className="scene-hud-v2"><span>BLACKTERM // SCENE ENGINE</span><b>{wallpaper.replaceAll('-',' ').toUpperCase()}</b><em>{activeApp?`REACTIVE LINK // ${activeApp.toUpperCase()}`:'ENVIRONMENT STABLE'} • {timeCycle?phaseLabels[phase]:'TIME CYCLE OFF'} • EVOLUTION {evolution}/4</em></div>
   </div>
 }
