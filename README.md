@@ -1,39 +1,28 @@
-# BLACKTERM OS v13.1 — Draggable Persistent Desktop
+# BLACKTERM OS — Recruiter Mode
 
-Adds:
+Recruiter Mode adds a six-step guided tour designed for hiring managers and interviewers.
 
-- Drag-and-drop desktop icons
-- Free icon positioning
-- Apps dragged from Start to the desktop
-- Plus button to add Start-menu apps as shortcuts
-- Right-click an icon to remove it
-- Align and Reset controls
-- Layout persistence using localStorage
-- Positions survive refreshes and future visits
-- Automatic backups
+## Included
 
-## Install when files are inside the main project
+- Recruiter-tour button on the login screen
+- Recruiter-tour button in the desktop Quick Access panel
+- Six guided stages covering Tyler, the Home Lab, Incident Engine, Malware Sandbox, projects/training, and contact
+- Automatic opening of the application connected to each stage
+- Back, Next, Pause, Skip, Exit, keyboard navigation, and progress tracking
+- Responsive BLACKTERM-styled overlay
+- Completed-tour state stored in localStorage
+
+## Build
 
 ```powershell
-python .\install_desktop_layout.py .
+npm.cmd install
 npm.cmd run build
-npm.cmd run dev
 ```
-
-## Controls
-
-- Drag a desktop icon to move it.
-- Double-click it to open.
-- Right-click it to remove the shortcut.
-- Drag an app from Start onto the desktop.
-- Press `＋` beside an app in Start to add it.
-- Use `ALIGN` to organize icons.
-- Use `RESET` to restore the default desktop.
 
 ## Deploy
 
 ```powershell
 git add .
-git commit -m "Add draggable persistent desktop shortcuts"
+git commit -m "Add Recruiter Mode guided portfolio tour"
 git push
 ```
