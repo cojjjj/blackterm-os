@@ -1,18 +1,14 @@
-BLACKTERM OS Recruiter Mode crash fix
+BLACKTERM OS Desktop Icon Vertical Drag Fix
 
-Replace:
-  src/App.tsx
-
-Cause:
-The Recruiter Tour opened the internal 'interview' app on its final step, but that app was missing from the central apps registry. React then tried to read title/icon data from an undefined registry entry and rendered a blank screen.
-
-This patch registers:
-  id: interview
-  title: Why Tyler?
-  icon: /icons/interview.svg
+Replace these files in your project:
+- src/components/DesktopWorkspace.tsx
+- src/styles.css
+- desktop-layout.css
 
 Then run:
-  npm.cmd run build
-  git add .
-  git commit -m "Fix Recruiter Mode final step crash"
-  git push
+npm.cmd run build
+git add .
+git commit -m "Fix full-screen desktop icon dragging"
+git push
+
+The fix tracks pointer movement at the window level, allows full X/Y movement across the desktop above the taskbar, and saves the latest position correctly.

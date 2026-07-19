@@ -1,5 +1,5 @@
 /* BLACKTERM OS v13.1 — persistent draggable desktop */
-.desktop-workspace{position:absolute;inset:0 0 58px 0;z-index:4;overflow:hidden;touch-action:none}
+.desktop-workspace{position:absolute;left:0;right:0;top:0;bottom:58px;width:100%;height:calc(100% - 58px);z-index:4;overflow:hidden;touch-action:none;contain:layout paint}
 .desktop-workspace.is-dragging{cursor:grabbing}
 .movable-desktop-icon{position:absolute;width:96px;min-height:98px;border:1px solid transparent;background:transparent;border-radius:9px;padding:6px 4px;display:flex;flex-direction:column;align-items:center;gap:5px;color:#dcecff;user-select:none;touch-action:none;cursor:grab}
 .movable-desktop-icon:hover,.movable-desktop-icon.selected{background:rgba(77,163,255,.09);border-color:rgba(77,163,255,.24)}

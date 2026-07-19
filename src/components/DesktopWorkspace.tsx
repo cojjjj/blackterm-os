@@ -49,6 +49,10 @@ export function DesktopWorkspace({apps,openApp}:{apps:AppLike[];openApp:(id:any)
   const [selected,setSelected]=useState<string|null>(null);
   const [dragging,setDragging]=useState<string|null>(null);
   const dragOffset=useRef({x:0,y:0});
+  const activePointer=useRef<number|null>(null);
+  const layoutRef=useRef(layout);
+
+  useEffect(()=>{ layoutRef.current=layout; },[layout]);
 
   useEffect(()=>{
     const sync=(event:Event)=>setLayout((event as CustomEvent<LayoutState>).detail||readLayout(apps));
@@ -94,29 +98,52 @@ export function DesktopWorkspace({apps,openApp}:{apps:AppLike[];openApp:(id:any)
   const onPointerDown=(event:React.PointerEvent,id:string)=>{
     if(event.button!==0)return;
     const area=areaRef.current;
-    const pos=layout.positions[id]||{x:0,y:0};
-    if(area){
+    const pos=layoutRef.current.positions[id]||{x:0,y:0};
+    if(!area)return;
+    const rect=area.getBoundingClientRect();
+    dragOffset.current={x:event.clientX-rect.left-pos.x,y:event.clientY-rect.top-pos.y};
+    activePointer.current=event.pointerId;
+    setSelected(id);
+    setDragging(id);
+    event.preventDefault();
+  };
+
+  useEffect(()=>{
+    if(!dragging)return;
+
+    const move=(event:PointerEvent)=>{
+      if(activePointer.current!==null&&event.pointerId!==activePointer.current)return;
+      const area=areaRef.current;
+      if(!area)return;
       const rect=area.getBoundingClientRect();
-      dragOffset.current={x:event.clientX-rect.left-pos.x,y:event.clientY-rect.top-pos.y};
-    }
-    setSelected(id);setDragging(id);
-    (event.currentTarget as HTMLElement).setPointerCapture(event.pointerId);
-  };
+      const maxX=Math.max(0,rect.width-ICON_WIDTH);
+      const maxY=Math.max(0,rect.height-ICON_HEIGHT);
+      const x=clamp(snap(event.clientX-rect.left-dragOffset.current.x,6),0,maxX);
+      const y=clamp(snap(event.clientY-rect.top-dragOffset.current.y,6),0,maxY);
+      setLayout(current=>{
+        const next={...current,positions:{...current.positions,[dragging]:{x,y}}};
+        layoutRef.current=next;
+        return next;
+      });
+      event.preventDefault();
+    };
 
-  const onPointerMove=(event:React.PointerEvent,id:string)=>{
-    if(dragging!==id||!areaRef.current)return;
-    const rect=areaRef.current.getBoundingClientRect();
-    const x=clamp(snap(event.clientX-rect.left-dragOffset.current.x,6),0,Math.max(0,rect.width-ICON_WIDTH));
-    const y=clamp(snap(event.clientY-rect.top-dragOffset.current.y,6),0,Math.max(0,rect.height-ICON_HEIGHT));
-    setLayout(current=>({...current,positions:{...current.positions,[id]:{x,y}}}));
-  };
+    const finish=(event:PointerEvent)=>{
+      if(activePointer.current!==null&&event.pointerId!==activePointer.current)return;
+      activePointer.current=null;
+      setDragging(null);
+      saveLayout(layoutRef.current);
+    };
 
-  const onPointerUp=(event:React.PointerEvent,id:string)=>{
-    if(dragging!==id)return;
-    setDragging(null);
-    saveLayout(layout);
-    try{(event.currentTarget as HTMLElement).releasePointerCapture(event.pointerId)}catch{}
-  };
+    window.addEventListener('pointermove',move,{passive:false});
+    window.addEventListener('pointerup',finish);
+    window.addEventListener('pointercancel',finish);
+    return()=>{
+      window.removeEventListener('pointermove',move);
+      window.removeEventListener('pointerup',finish);
+      window.removeEventListener('pointercancel',finish);
+    };
+  },[dragging]);
 
   return <div
     ref={areaRef}
@@ -143,8 +170,6 @@ export function DesktopWorkspace({apps,openApp}:{apps:AppLike[];openApp:(id:any)
         className={`movable-desktop-icon ${selected===id?'selected':''} ${dragging===id?'dragging':''}`}
         style={{left:position.x,top:position.y}}
         onPointerDown={event=>onPointerDown(event,id)}
-        onPointerMove={event=>onPointerMove(event,id)}
-        onPointerUp={event=>onPointerUp(event,id)}
         onDoubleClick={()=>openApp(id)}
         onContextMenu={event=>{event.preventDefault();removeShortcut(id)}}
         title={`${app.title} — double-click to open, right-click to remove`}
