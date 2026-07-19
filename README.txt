@@ -1,16 +1,13 @@
-BLACKTERM OS v13.3.1 — RANDOM SPECTRUM
+BLACKTERM OS — Exclusive Wallpaper Patch
 
-Replace:
-  src/App.tsx
-  src/styles.css
-  src/components/Personalization.tsx
+Copy these folders into the root of your current project and allow files to merge/replace:
+- src/
+- public/
 
 Then run:
   npm.cmd run build
   git add .
-  git commit -m "Add Random Spectrum color cycling"
+  git commit -m "Add exclusive BLACKTERM wallpaper"
   git push
 
-Open Settings > Accent themes > Random Spectrum.
-Use the speed slider to choose a cycle from 0.8 to 6.0 seconds.
-Selecting any fixed theme automatically disables Random Spectrum.
+Open Settings > Wallpaper > Exclusive Collection.

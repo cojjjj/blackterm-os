@@ -1,7 +1,7 @@
 import React from 'react';
 
 export type ThemeName = 'blue'|'cyan'|'violet'|'green'|'red'|'amber'|'ghost';
-export type WallpaperName = 'grid'|'void'|'circuit'|'nebula'|'minimal';
+export type WallpaperName = 'grid'|'void'|'circuit'|'nebula'|'minimal'|'exclusive';
 export type VisualEffects = {
   particles:boolean;
   glass:boolean;
@@ -38,7 +38,7 @@ const themes:[ThemeName,string,string][]=[
   ['cyan','Arctic Signal','#46e5ef'],
   ['ghost','Ghost White','#d8efff']
 ];
-const wallpapers:[WallpaperName,string][]=[['grid','Tactical Grid'],['void','Deep Void'],['circuit','Circuit Mesh'],['nebula','Signal Nebula'],['minimal','Blackout']];
+const wallpapers:[WallpaperName,string][]=[['grid','Tactical Grid'],['void','Deep Void'],['circuit','Circuit Mesh'],['nebula','Signal Nebula'],['minimal','Blackout'],['exclusive','Exclusive Collection']];
 
 export default function Personalization({theme,setTheme,matrix,setMatrix,effects,setEffects}:Props){
   const patch=(change:Partial<VisualEffects>)=>setEffects(current=>({...current,...change}));
