@@ -51,7 +51,7 @@ const steps: TourStep[] = [
     description: 'Thank you for exploring BLACKTERM OS. Tyler is ready to bring curiosity, troubleshooting discipline, and security awareness to an IT or cybersecurity team.',
     app: 'interview',
     proof: ['Production-deployed portfolio', '5,662+ lines across 32 source files', 'Available for professional opportunities'],
-    actionLabel: 'OPEN RESUME',
+    actionLabel: 'FINISH TOUR',
   },
 ];
 
@@ -131,7 +131,7 @@ export default function RecruiterMode({
         <button onClick={finish}>SKIP TOUR</button>
         {index < steps.length - 1
           ? <button className="primary" onClick={() => setIndex(value => value + 1)}>NEXT →</button>
-          : <button className="primary" onClick={() => { openApp('resume'); finish(); }}>{step.actionLabel || 'FINISH'}</button>}
+          : <button className="primary" onClick={finish}>{step.actionLabel || 'FINISH'}</button>}
       </footer>
       <em>Use ← → arrow keys to navigate • ESC to exit</em>
     </section>
