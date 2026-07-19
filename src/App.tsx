@@ -30,6 +30,7 @@ const apps: { id: AppId; title: string; icon: string; hint:string }[] = [
   { id:'tryhackme', title:'TryHackMe', icon:'/icons/tryhackme.svg', hint:'Training profile' },
   { id:'assistant', title:'Assistant.exe', icon:'/icons/assistant.svg', hint:'Ask about Tyler' },
   { id:'gallery', title:'Gallery', icon:'/icons/gallery.svg', hint:'Project visuals' },
+  { id:'interview', title:'Why Tyler?', icon:'/icons/interview.svg', hint:'Recruiter closing summary' },
   { id:'terminal', title:'BlackTerm', icon:'/icons/terminal.svg', hint:'Interactive shell' },
   { id:'contact', title:'Secure Comms', icon:'/icons/contact.svg', hint:'Contact Tyler' },
   { id:'settings', title:'Settings', icon:'/icons/settings.svg', hint:'Customize workstation' }
