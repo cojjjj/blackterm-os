@@ -4,7 +4,7 @@ type AppLike = { id:string; title:string; icon:string; hint:string };
 type Position = { x:number; y:number };
 type LayoutState = { ids:string[]; positions:Record<string,Position> };
 
-const STORAGE_KEY = 'blackterm-desktop-layout-v1';
+const STORAGE_KEY = 'blackterm-desktop-layout-v2';
 const CHANGE_EVENT = 'blackterm:desktop-layout';
 const ICON_WIDTH = 96;
 const ICON_HEIGHT = 104;
@@ -105,6 +105,7 @@ export function DesktopWorkspace({apps,openApp}:{apps:AppLike[];openApp:(id:any)
     activePointer.current=event.pointerId;
     setSelected(id);
     setDragging(id);
+    try { event.currentTarget.setPointerCapture(event.pointerId); } catch {}
     event.preventDefault();
   };
 
@@ -116,8 +117,10 @@ export function DesktopWorkspace({apps,openApp}:{apps:AppLike[];openApp:(id:any)
       const area=areaRef.current;
       if(!area)return;
       const rect=area.getBoundingClientRect();
-      const maxX=Math.max(0,rect.width-ICON_WIDTH);
-      const maxY=Math.max(0,rect.height-ICON_HEIGHT);
+      const width=area.clientWidth||rect.width||window.innerWidth;
+      const height=area.clientHeight||rect.height||Math.max(0,window.innerHeight-58);
+      const maxX=Math.max(0,width-ICON_WIDTH);
+      const maxY=Math.max(0,height-ICON_HEIGHT);
       const x=clamp(snap(event.clientX-rect.left-dragOffset.current.x,6),0,maxX);
       const y=clamp(snap(event.clientY-rect.top-dragOffset.current.y,6),0,maxY);
       setLayout(current=>{
@@ -168,7 +171,7 @@ export function DesktopWorkspace({apps,openApp}:{apps:AppLike[];openApp:(id:any)
       return <button
         key={id}
         className={`movable-desktop-icon ${selected===id?'selected':''} ${dragging===id?'dragging':''}`}
-        style={{left:position.x,top:position.y}}
+        style={{transform:`translate3d(${position.x}px, ${position.y}px, 0)`}}
         onPointerDown={event=>onPointerDown(event,id)}
         onDoubleClick={()=>openApp(id)}
         onContextMenu={event=>{event.preventDefault();removeShortcut(id)}}

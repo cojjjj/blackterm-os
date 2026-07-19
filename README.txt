@@ -1,14 +1,18 @@
-BLACKTERM OS Desktop Icon Vertical Drag Fix
+BLACKTERM OS desktop icon free-movement fix
 
-Replace these files in your project:
+Replace:
 - src/components/DesktopWorkspace.tsx
 - src/styles.css
 - desktop-layout.css
 
-Then run:
+This version:
+- uses translate3d(x,y) instead of CSS top/left
+- captures the pointer during dragging
+- measures the actual desktop client height
+- resets the saved layout using a v2 storage key
+
+After replacement run:
 npm.cmd run build
 git add .
-git commit -m "Fix full-screen desktop icon dragging"
+git commit -m "Fix unrestricted desktop icon movement"
 git push
-
-The fix tracks pointer movement at the window level, allows full X/Y movement across the desktop above the taskbar, and saves the latest position correctly.
