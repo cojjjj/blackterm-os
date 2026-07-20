@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import { useObserverNetwork } from "../context/ObserverNetworkContext";
 import {
   networkOperationsService,
@@ -36,95 +36,116 @@ type ChatAction = {
 };
 
 type ChatMessage = {
-  from: "user" | "ai";
-  text: string;
+  id: string;
+  role: "user" | "assistant";
+  content: string;
   actions?: ChatAction[];
+  category?: string;
 };
 
-type Props = {
+type ApiHistoryItem = {
+  role: "user" | "assistant";
+  content: string;
+};
+
+type ApiReply = {
+  text?: string;
+  error?: string;
+};
+
+interface BlackTermAIControllerProps {
   openApp: (id: AppTarget) => void;
   notify: (message: string) => void;
   activeContext?: AppTarget;
-};
+}
 
-const emptyOverview: NetworkOverview = {
+const EMPTY_OVERVIEW: NetworkOverview = {
   active_observers: 0,
   total_observers: 0,
   total_visits: 0,
   open_transmissions: 0,
 };
 
-const appCommands: Array<{
+const COMMANDS: Array<{
   app: AppTarget;
-  labels: string[];
   title: string;
+  aliases: string[];
 }> = [
-  { app: "resume", title: "Resume.pdf", labels: ["resume", "cv"] },
+  { app: "resume", title: "Resume.pdf", aliases: ["resume", "cv"] },
   {
     app: "projects",
     title: "Project Archive",
-    labels: ["project archive", "projects", "python projects", "portfolio projects"],
+    aliases: ["project archive", "projects", "python projects"],
   },
-  { app: "github", title: "GitHub Live", labels: ["github", "repositories", "repos"] },
+  { app: "github", title: "GitHub Live", aliases: ["github", "repositories", "repos"] },
   {
     app: "observer",
     title: "Observer Network",
-    labels: ["observer profile", "observer network", "my profile"],
+    aliases: ["observer network", "observer profile", "profile"],
   },
   {
     app: "noc",
     title: "Network Operations",
-    labels: ["network operations", "noc", "active observers", "live network"],
+    aliases: ["network operations", "noc", "active observers", "live network"],
   },
   {
     app: "command",
     title: "Command Intelligence",
-    labels: ["command intelligence", "daily mission", "mission"],
+    aliases: ["command intelligence", "mission", "daily mission"],
   },
   {
     app: "threatmap",
     title: "Threat Map",
-    labels: ["threat map", "threat intelligence", "global threats"],
+    aliases: ["threat map", "threat intelligence"],
   },
-  { app: "homelab", title: "Home Lab", labels: ["home lab", "soc lab", "cyber range"] },
+  { app: "homelab", title: "Home Lab", aliases: ["home lab", "soc lab", "cyber range"] },
   {
     app: "incident",
     title: "Incident Engine",
-    labels: ["incident engine", "incident response", "ir lab"],
+    aliases: ["incident engine", "incident response", "ir lab"],
   },
   {
     app: "sandbox",
     title: "Malware Sandbox",
-    labels: ["malware sandbox", "sandbox", "malware analysis"],
+    aliases: ["malware sandbox", "sandbox", "malware analysis"],
   },
   {
     app: "certs",
     title: "Certifications",
-    labels: ["certifications", "certificates", "certs"],
+    aliases: ["certifications", "certificates", "certs"],
   },
-  { app: "skills", title: "Skills Monitor", labels: ["skills", "capabilities"] },
+  { app: "skills", title: "Skills Monitor", aliases: ["skills", "capabilities"] },
   {
     app: "career",
     title: "Career Timeline",
-    labels: ["career", "experience", "work history"],
+    aliases: ["career", "experience", "work history"],
   },
-  { app: "contact", title: "Secure Comms", labels: ["contact", "email", "connect"] },
-  { app: "terminal", title: "BlackTerm", labels: ["terminal", "shell", "blackterm"] },
-  { app: "security", title: "Security Center", labels: ["security center", "security"] },
-  { app: "settings", title: "Settings", labels: ["settings", "personalization"] },
-  { app: "tryhackme", title: "TryHackMe", labels: ["tryhackme", "training record"] },
+  { app: "contact", title: "Secure Comms", aliases: ["contact", "email", "connect"] },
+  { app: "terminal", title: "BlackTerm", aliases: ["terminal", "shell"] },
+  { app: "security", title: "Security Center", aliases: ["security center"] },
+  { app: "settings", title: "Settings", aliases: ["settings", "personalization"] },
+  { app: "tryhackme", title: "TryHackMe", aliases: ["tryhackme", "training record"] },
 ];
 
-function detectAppCommand(query: string) {
+const SUGGESTIONS = [
+  "Tell me about Tyler",
+  "I'm hiring for desktop support",
+  "Show Python projects",
+  "What certifications does Tyler have?",
+  "Open Incident Engine",
+];
+
+function makeId(): string {
+  return crypto.randomUUID();
+}
+
+function detectCommand(query: string) {
   const normalized = query.toLowerCase();
-  const commandVerb =
-    /\b(open|show|launch|start|take me to|display|view|bring up)\b/i.test(query);
-
-  if (!commandVerb) return null;
-
+  const hasVerb = /\b(open|show|launch|start|display|view|bring up|take me to)\b/i.test(query);
+  if (!hasVerb) return null;
   return (
-    appCommands.find((command) =>
-      command.labels.some((label) => normalized.includes(label)),
+    COMMANDS.find((command) =>
+      command.aliases.some((alias) => normalized.includes(alias)),
     ) ?? null
   );
 }
@@ -139,53 +160,34 @@ function suggestedActions(text: string): ChatAction[] {
     }
   };
 
-  if (normalized.includes("resume") || normalized.includes("desktop support")) {
-    add("Open Resume", "resume");
-  }
-  if (
-    normalized.includes("project") ||
-    normalized.includes("python") ||
-    normalized.includes("blackterm")
-  ) {
-    add("View Projects", "projects");
-  }
-  if (
-    normalized.includes("soc") ||
-    normalized.includes("incident") ||
-    normalized.includes("detection")
-  ) {
-    add("Open Incident Engine", "incident");
-  }
-  if (normalized.includes("github") || normalized.includes("repository")) {
-    add("Open GitHub", "github");
-  }
-  if (normalized.includes("certification")) {
-    add("View Certifications", "certs");
-  }
-  if (normalized.includes("observer") || normalized.includes("network")) {
-    add("Open Observer Network", "observer");
-  }
+  if (normalized.includes("resume") || normalized.includes("desktop support")) add("Open Resume", "resume");
+  if (normalized.includes("project") || normalized.includes("python") || normalized.includes("blackterm")) add("View Projects", "projects");
+  if (normalized.includes("soc") || normalized.includes("incident") || normalized.includes("detection")) add("Open Incident Engine", "incident");
+  if (normalized.includes("github") || normalized.includes("repository")) add("Open GitHub", "github");
+  if (normalized.includes("certification")) add("View Certifications", "certs");
+  if (normalized.includes("observer") || normalized.includes("network")) add("Open Observer Network", "observer");
 
   return actions.slice(0, 3);
 }
 
 function isRecruiterQuery(query: string): boolean {
-  return /\b(hiring|hire|job description|candidate|role|recruiter|fit|match|qualification)\b/i.test(
-    query,
-  );
+  return /\b(hiring|hire|job description|candidate|role|recruiter|fit|match|qualification)\b/i.test(query);
 }
 
 export default function BlackTermAIController({
   openApp,
   notify,
-  activeContext,
-}: Props) {
+  activeContext = "assistant",
+}: BlackTermAIControllerProps) {
   const { session } = useObserverNetwork();
+
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
-      from: "ai",
-      text:
+      id: makeId(),
+      role: "assistant",
+      content:
         "BLACKTERM Intelligence Core online. Ask about Tyler, paste a job description, inspect live network activity, or tell me which application to open.",
+      category: "SYSTEM INITIALIZATION",
       actions: [
         { label: "Why hire Tyler?", app: "interview" },
         { label: "Open Resume", app: "resume" },
@@ -193,33 +195,43 @@ export default function BlackTermAIController({
       ],
     },
   ]);
+
   const [input, setInput] = useState("");
   const [thinking, setThinking] = useState(false);
-  const [mode, setMode] = useState<"CONNECTING" | "LIVE AI" | "LOCAL FALLBACK">(
-    "CONNECTING",
-  );
-  const [overview, setOverview] = useState<NetworkOverview>(emptyOverview);
-
-  const refreshNetwork = async () => {
-    try {
-      const nextOverview = await networkOperationsService.getOverview();
-      setOverview(nextOverview);
-    } catch (error) {
-      console.error("BLACKTERM AI network context failed:", error);
-    }
-  };
+  const [mode, setMode] = useState<"CONNECTING" | "LIVE AI" | "LOCAL FALLBACK">("CONNECTING");
+  const [overview, setOverview] = useState<NetworkOverview>(EMPTY_OVERVIEW);
+  const logRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    void refreshNetwork();
-    const timer = window.setInterval(() => void refreshNetwork(), 30_000);
+    const refresh = async () => {
+      try {
+        const next = await networkOperationsService.getOverview();
+        setOverview(next);
+      } catch (error) {
+        console.error("BLACKTERM AI telemetry failed:", error);
+      }
+    };
+
+    void refresh();
+    const timer = window.setInterval(() => void refresh(), 30_000);
     return () => window.clearInterval(timer);
   }, []);
 
-  const contextSummary = useMemo(
+  useEffect(() => {
+    logRef.current?.scrollTo({
+      top: logRef.current.scrollHeight,
+      behavior: "smooth",
+    });
+  }, [messages, thinking]);
+
+  const observerCode = session?.observer.observer_id ?? "UNASSIGNED";
+  const clearance = session?.observer.clearance ?? "VISITOR";
+
+  const liveContext = useMemo(
     () => ({
-      activeApp: activeContext ?? "assistant",
-      observerId: session?.observer.observer_id ?? "UNASSIGNED",
-      clearance: session?.observer.clearance ?? "VISITOR",
+      activeApp: activeContext,
+      observerId: observerCode,
+      clearance,
       achievements: session?.achievements.length ?? 0,
       points: session?.points ?? 0,
       activeObservers: overview.active_observers,
@@ -227,36 +239,38 @@ export default function BlackTermAIController({
       networkConnections: overview.total_visits,
       transmissions: overview.open_transmissions,
     }),
-    [activeContext, overview, session],
+    [activeContext, clearance, observerCode, overview, session?.achievements.length, session?.points],
   );
 
-  const addMessage = (message: ChatMessage) => {
-    setMessages((current) => [...current, message]);
-  };
+  function addMessage(message: Omit<ChatMessage, "id">) {
+    setMessages((current) => [...current, { ...message, id: makeId() }]);
+  }
 
-  const runLocalCommand = (query: string): boolean => {
-    const command = detectAppCommand(query);
+  function runLocalCommand(query: string): boolean {
+    const command = detectCommand(query);
 
     if (command) {
       openApp(command.app);
       notify(`BLACKTERM AI launched ${command.title}.`);
       addMessage({
-        from: "ai",
-        text: `Directive accepted. Launching ${command.title}.`,
+        role: "assistant",
+        content: `Directive accepted. Launching ${command.title}.`,
+        category: "OS COMMAND",
         actions: [{ label: `Open ${command.title}`, app: command.app }],
       });
       setMode("LIVE AI");
       return true;
     }
 
-    if (/\b(recruiter mode|recruiter tour)\b/i.test(query)) {
+    if (/\b(recruiter mode|recruiter workflow|recruiter tour)\b/i.test(query)) {
       openApp("interview");
       openApp("resume");
-      notify("Recruiter evidence package opened.");
+      notify("Recruiter evidence workflow opened.");
       addMessage({
-        from: "ai",
-        text:
+        role: "assistant",
+        content:
           "Recruiter workflow initialized. I opened Tyler's hiring summary and resume so the strongest evidence is immediately available.",
+        category: "RECRUITER WORKFLOW",
         actions: [
           { label: "Hiring Summary", app: "interview" },
           { label: "Resume", app: "resume" },
@@ -269,11 +283,12 @@ export default function BlackTermAIController({
 
     if (/\b(show|check|report).*(online|observers|network status)\b/i.test(query)) {
       addMessage({
-        from: "ai",
-        text:
+        role: "assistant",
+        content:
           `Observer Network report: ${overview.active_observers} active, ` +
           `${overview.total_observers} registered, ${overview.total_visits} recorded connections, ` +
           `and ${overview.open_transmissions} indexed transmissions.`,
+        category: "LIVE NETWORK REPORT",
         actions: [
           { label: "Open NOC", app: "noc" },
           { label: "Observer Profile", app: "observer" },
@@ -284,13 +299,17 @@ export default function BlackTermAIController({
     }
 
     return false;
-  };
+  }
 
-  const submit = async (question = input) => {
+  async function submit(question = input) {
     const query = question.trim();
     if (!query || thinking) return;
 
-    addMessage({ from: "user", text: query });
+    addMessage({
+      role: "user",
+      content: query,
+      category: "VISITOR QUERY",
+    });
     setInput("");
 
     if (runLocalCommand(query)) return;
@@ -299,13 +318,13 @@ export default function BlackTermAIController({
     setMode("CONNECTING");
 
     try {
-      const history = messages.slice(-8).map((message) => ({
-        role: message.from === "ai" ? "assistant" : "user",
-        content: message.text,
+      const history: ApiHistoryItem[] = messages.slice(-8).map((message) => ({
+        role: message.role,
+        content: message.content,
       }));
 
       const recruiterInstruction = isRecruiterQuery(query)
-        ? "\nThis is a recruiter or job-fit query. Give a clear evidence-based fit assessment, identify strengths and honest gaps, and recommend which portfolio apps to inspect."
+        ? "\nThis is a recruiter or job-fit query. Give a clear, evidence-based fit assessment, identify strengths and honest gaps, and recommend which portfolio applications to inspect."
         : "";
 
       const response = await fetch("/api/blackterm-ai", {
@@ -315,39 +334,50 @@ export default function BlackTermAIController({
           message:
             query +
             recruiterInstruction +
-            `\n\nLive BLACKTERM state: ${JSON.stringify(contextSummary)}`,
+            `\n\nLive BLACKTERM state: ${JSON.stringify(liveContext)}`,
           history,
-          activeContext: contextSummary.activeApp,
+          activeContext,
         }),
       });
 
-      const payload = await response.json().catch(() => ({}));
+      const rawText = await response.text();
+      let payload: ApiReply = {};
+
+      try {
+        payload = rawText ? (JSON.parse(rawText) as ApiReply) : {};
+      } catch {
+        payload = {
+          error: rawText || "The intelligence service returned invalid JSON.",
+        };
+      }
 
       if (!response.ok) {
         throw new Error(
-          typeof payload?.error === "string"
-            ? payload.error
-            : `Intelligence service returned ${response.status}.`,
+          payload.error || `Intelligence service returned ${response.status}.`,
         );
       }
 
-      const text =
-        typeof payload?.text === "string" && payload.text.trim()
-          ? payload.text.trim()
-          : "The Intelligence Core returned an empty response.";
+      const answer = payload.text?.trim();
+      if (!answer) {
+        throw new Error("The intelligence service returned an empty answer.");
+      }
 
       addMessage({
-        from: "ai",
-        text,
-        actions: suggestedActions(text),
+        role: "assistant",
+        content: answer,
+        category: "LIVE INTELLIGENCE RESPONSE",
+        actions: suggestedActions(answer),
       });
       setMode("LIVE AI");
     } catch (error) {
       console.error("BLACKTERM AI request failed:", error);
       addMessage({
-        from: "ai",
-        text:
-          "Live intelligence is temporarily unavailable. The local command layer remains operational, so you can still open apps, inspect projects, view the resume, or access the Observer Network.",
+        role: "assistant",
+        content:
+          error instanceof Error
+            ? `Live intelligence is temporarily unavailable: ${error.message}`
+            : "Live intelligence is temporarily unavailable. The local command layer remains operational.",
+        category: "LOCAL FALLBACK",
         actions: [
           { label: "Open Resume", app: "resume" },
           { label: "View Projects", app: "projects" },
@@ -358,91 +388,65 @@ export default function BlackTermAIController({
     } finally {
       setThinking(false);
     }
-  };
+  }
+
+  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    void submit();
+  }
 
   return (
     <div className="bt-ai-control">
       <header className="bt-ai-control-header">
-        <div className="bt-ai-core-mark">
+        <div className="bt-ai-core-mark" aria-hidden="true">
           <span>BT</span>
           <i />
         </div>
+
         <div>
           <small>BLACKTERM INTELLIGENCE CORE</small>
           <h2>Operating System Assistant</h2>
-          <p>
-            Portfolio knowledge, recruiter analysis, live telemetry, and desktop
-            control.
-          </p>
+          <p>Portfolio knowledge, recruiter analysis, live telemetry, and desktop control.</p>
         </div>
-        <div className={`bt-ai-mode mode-${mode.toLowerCase().replace(" ", "-")}`}>
+
+        <div className={`bt-ai-mode mode-${mode.toLowerCase().replaceAll(" ", "-")}`}>
           <i />
           <span>{mode}</span>
         </div>
       </header>
 
       <section className="bt-ai-telemetry">
-        <article>
-          <small>OBSERVER</small>
-          <strong>{contextSummary.observerId}</strong>
-        </article>
-        <article>
-          <small>ACTIVE OBSERVERS</small>
-          <strong>{overview.active_observers}</strong>
-        </article>
-        <article>
-          <small>NETWORK CONNECTIONS</small>
-          <strong>{overview.total_visits}</strong>
-        </article>
-        <article>
-          <small>ACTIVE CONTEXT</small>
-          <strong>{String(contextSummary.activeApp).toUpperCase()}</strong>
-        </article>
+        <article><small>OBSERVER</small><strong>{observerCode}</strong></article>
+        <article><small>ACTIVE OBSERVERS</small><strong>{overview.active_observers}</strong></article>
+        <article><small>NETWORK CONNECTIONS</small><strong>{overview.total_visits}</strong></article>
+        <article><small>ACTIVE CONTEXT</small><strong>{String(activeContext).toUpperCase()}</strong></article>
       </section>
 
       <div className="bt-ai-layout">
         <aside className="bt-ai-command-panel">
           <small>OS DIRECTIVES</small>
-          <button onClick={() => submit("Open my resume")}>OPEN RESUME</button>
-          <button onClick={() => submit("Show my projects")}>
-            PROJECT ARCHIVE
-          </button>
-          <button onClick={() => submit("Open Network Operations")}>
-            NETWORK OPERATIONS
-          </button>
-          <button onClick={() => submit("Start recruiter mode")}>
-            RECRUITER WORKFLOW
-          </button>
+          <button onClick={() => void submit("Open my resume")}>OPEN RESUME</button>
+          <button onClick={() => void submit("Show my projects")}>PROJECT ARCHIVE</button>
+          <button onClick={() => void submit("Open Network Operations")}>NETWORK OPERATIONS</button>
+          <button onClick={() => void submit("Start recruiter mode")}>RECRUITER WORKFLOW</button>
 
           <small>QUERY TEMPLATES</small>
-          <button onClick={() => submit("Why should someone hire Tyler?")}>
-            WHY HIRE TYLER?
-          </button>
-          <button
-            onClick={() =>
-              submit("Show the strongest cybersecurity projects in Tyler's portfolio.")
-            }
-          >
-            CYBER PROJECTS
-          </button>
-          <button onClick={() => submit("Report current observer network status")}>
-            LIVE NETWORK REPORT
-          </button>
+          <button onClick={() => void submit("Why should someone hire Tyler?")}>WHY HIRE TYLER?</button>
+          <button onClick={() => void submit("Show the strongest cybersecurity projects in Tyler's portfolio.")}>CYBER PROJECTS</button>
+          <button onClick={() => void submit("Report current observer network status")}>LIVE NETWORK REPORT</button>
         </aside>
 
         <section className="bt-ai-chat">
-          <div className="bt-ai-log">
-            {messages.map((message, index) => (
-              <article className={message.from} key={`${message.from}-${index}`}>
-                <small>{message.from === "ai" ? "BLACKTERM AI" : "VISITOR"}</small>
-                <p>{message.text}</p>
+          <div className="bt-ai-log" ref={logRef}>
+            {messages.map((message) => (
+              <article className={message.role} key={message.id}>
+                <small>{message.role === "assistant" ? "BLACKTERM AI" : "VISITOR"}</small>
+                {message.category ? <b>{message.category}</b> : null}
+                <p>{message.content}</p>
                 {message.actions?.length ? (
                   <div>
                     {message.actions.map((action) => (
-                      <button
-                        key={`${action.app}-${action.label}`}
-                        onClick={() => openApp(action.app)}
-                      >
+                      <button key={`${action.app}-${action.label}`} onClick={() => openApp(action.app)}>
                         {action.label} ↗
                       </button>
                     ))}
@@ -452,7 +456,7 @@ export default function BlackTermAIController({
             ))}
 
             {thinking ? (
-              <article className="ai bt-ai-thinking">
+              <article className="assistant bt-ai-thinking">
                 <small>BLACKTERM AI</small>
                 <p>Synchronizing portfolio index and live system context...</p>
                 <i />
@@ -461,26 +465,14 @@ export default function BlackTermAIController({
           </div>
 
           <div className="bt-ai-suggestions">
-            {[
-              "Tell me about Tyler",
-              "I'm hiring for desktop support",
-              "Show Python projects",
-              "What certifications does Tyler have?",
-              "Open Incident Engine",
-            ].map((suggestion) => (
-              <button key={suggestion} onClick={() => submit(suggestion)}>
+            {SUGGESTIONS.map((suggestion) => (
+              <button key={suggestion} onClick={() => void submit(suggestion)}>
                 {suggestion}
               </button>
             ))}
           </div>
 
-          <form
-            className="bt-ai-input"
-            onSubmit={(event) => {
-              event.preventDefault();
-              void submit();
-            }}
-          >
+          <form className="bt-ai-input" onSubmit={handleSubmit}>
             <textarea
               value={input}
               onChange={(event) => setInput(event.target.value)}
@@ -493,6 +485,7 @@ export default function BlackTermAIController({
                 }
               }}
             />
+
             <button type="submit" disabled={thinking || !input.trim()}>
               {thinking ? "ANALYZING" : "SEND"}
             </button>
