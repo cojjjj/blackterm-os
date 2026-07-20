@@ -260,6 +260,214 @@ function ParticleField(){
  return <div className="particle-field" aria-hidden="true">{dots.map((d,i)=><i key={i} style={{left:d.left,top:d.top,width:d.size,height:d.size,animationDelay:d.delay,animationDuration:d.duration}}/>)}</div>
 }
 
+
+function FileExplorer({ openApp }: { openApp: (id: AppId) => void }) {
+  const records: Array<{
+    name: string;
+    type: string;
+    app: AppId;
+    description: string;
+  }> = [
+    {
+      name: 'Identity.profile',
+      type: 'OPERATOR RECORD',
+      app: 'identity',
+      description: 'Public operator profile and portfolio summary.',
+    },
+    {
+      name: 'Project Archive',
+      type: 'DIRECTORY',
+      app: 'projects',
+      description: 'Security tools, automation projects, labs, and source links.',
+    },
+    {
+      name: 'Tyler-Deppa-Resume.pdf',
+      type: 'PDF DOCUMENT',
+      app: 'resume',
+      description: 'Current public resume and professional experience.',
+    },
+    {
+      name: 'Certification Vault',
+      type: 'VERIFIED RECORDS',
+      app: 'certs',
+      description: 'Certification and training archive.',
+    },
+    {
+      name: 'Home SOC Detection Lab',
+      type: 'LAB ENVIRONMENT',
+      app: 'homelab',
+      description: 'Interactive cyber-range and telemetry topology.',
+    },
+    {
+      name: 'Incident Engine',
+      type: 'SIMULATION',
+      app: 'incident',
+      description: 'Connected detection and response mission.',
+    },
+    {
+      name: 'GitHub Live',
+      type: 'REMOTE SOURCE',
+      app: 'github',
+      description: 'Public repository feed and project source code.',
+    },
+    {
+      name: 'Secure Comms',
+      type: 'COMMUNICATION',
+      app: 'contact',
+      description: 'Public contact channels and professional links.',
+    },
+  ];
+
+  return (
+    <div className="file-explorer-app">
+      <div className="section-title">
+        <div>
+          <small>VIRTUAL FILE SYSTEM</small>
+          <h2>/home/tyler</h2>
+        </div>
+        <span>{records.length} MOUNTED RECORDS</span>
+      </div>
+
+      <div className="repo-list">
+        {records.map((record) => (
+          <button
+            key={record.name}
+            type="button"
+            onClick={() => openApp(record.app)}
+            style={{ width: '100%', textAlign: 'left' }}
+          >
+            <div>
+              <strong>{record.name}</strong>
+              <small>{record.description}</small>
+            </div>
+            <span>{record.type}</span>
+            <b>OPEN ↗</b>
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function TerminalApp({
+  openApp,
+  notify,
+  setMatrix,
+}: {
+  openApp: (id: AppId) => void;
+  notify: (message: string) => void;
+  setMatrix: (enabled: boolean) => void;
+}) {
+  const [command, setCommand] = useState('');
+  const [history, setHistory] = useState<string[]>([
+    'BLACKTERM shell initialized.',
+    'Type help to list available commands.',
+  ]);
+
+  const commandMap: Record<string, AppId> = {
+    assistant: 'assistant',
+    ai: 'assistant',
+    resume: 'resume',
+    projects: 'projects',
+    github: 'github',
+    observer: 'observer',
+    noc: 'noc',
+    command: 'command',
+    homelab: 'homelab',
+    incident: 'incident',
+    sandbox: 'sandbox',
+    certs: 'certs',
+    skills: 'skills',
+    career: 'career',
+    contact: 'contact',
+    settings: 'settings',
+  };
+
+  function execute(rawCommand: string) {
+    const clean = rawCommand.trim();
+    if (!clean) return;
+
+    const [verb, target] = clean.toLowerCase().split(/\s+/, 2);
+    const nextHistory = [...history, `visitor@blackterm:~$ ${clean}`];
+
+    if (verb === 'help') {
+      nextHistory.push(
+        'Commands: help, clear, status, matrix on, matrix off, open <app>',
+        'Apps: assistant, resume, projects, github, observer, noc, homelab, incident, sandbox, certs, skills, career, contact, settings',
+      );
+    } else if (verb === 'clear') {
+      setHistory([]);
+      setCommand('');
+      return;
+    } else if (verb === 'status') {
+      nextHistory.push(
+        'SYSTEM: ONLINE',
+        'OBSERVER NETWORK: CONNECTED',
+        'PORTFOLIO INDEX: MOUNTED',
+        'BLACKTERM AI: AVAILABLE',
+      );
+    } else if (verb === 'matrix' && target === 'on') {
+      setMatrix(true);
+      nextHistory.push('Matrix visualization enabled.');
+      notify('Matrix visualization enabled.');
+    } else if (verb === 'matrix' && target === 'off') {
+      setMatrix(false);
+      nextHistory.push('Matrix visualization disabled.');
+      notify('Matrix visualization disabled.');
+    } else if (verb === 'open' && target && commandMap[target]) {
+      openApp(commandMap[target]);
+      nextHistory.push(`Launching ${target}...`);
+      notify(`Terminal launched ${target}.`);
+    } else {
+      nextHistory.push(`Command not recognized: ${clean}`);
+    }
+
+    setHistory(nextHistory.slice(-40));
+    setCommand('');
+  }
+
+  return (
+    <div className="terminal-app">
+      <div className="section-title">
+        <div>
+          <small>SECURE LOCAL SHELL</small>
+          <h2>BLACKTERM TERMINAL</h2>
+        </div>
+        <span>SESSION ACTIVE</span>
+      </div>
+
+      <div
+        className="loading-panel"
+        style={{ minHeight: 320, whiteSpace: 'pre-wrap', overflow: 'auto' }}
+      >
+        {history.map((line, index) => (
+          <div key={`${line}-${index}`}>{line}</div>
+        ))}
+      </div>
+
+      <form
+        onSubmit={(event) => {
+          event.preventDefault();
+          execute(command);
+        }}
+        style={{ display: 'flex', gap: 8, marginTop: 12 }}
+      >
+        <input
+          value={command}
+          onChange={(event) => setCommand(event.target.value)}
+          placeholder="Enter command..."
+          aria-label="Terminal command"
+          autoComplete="off"
+          style={{ flex: 1 }}
+        />
+        <button type="submit" disabled={!command.trim()}>
+          EXECUTE
+        </button>
+      </form>
+    </div>
+  );
+}
+
 function AppContent({id,openApp,notify,theme,setTheme,matrix,setMatrix,effects,setEffects,activeContext}:{id:AppId;openApp:(id:AppId)=>void;notify:(s:string)=>void;theme:string;setTheme:(s:string)=>void;matrix:boolean;setMatrix:(v:boolean)=>void;effects:VisualEffects;setEffects:React.Dispatch<React.SetStateAction<VisualEffects>>;activeContext?:AppId}){
  switch(id){
   case'command':return <CommandIntelligence openApp={openApp}/>;
