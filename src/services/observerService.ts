@@ -7,28 +7,50 @@ function makeObserverCode(): string {
   return `OBS-${random}`;
 }
 
-function describeError(error: unknown): string {
-  if (error instanceof Error) return error.message;
-  if (!error || typeof error !== "object") return String(error);
-  const value = error as { message?: string; details?: string; hint?: string; code?: string };
-  return [value.message, value.details, value.hint, value.code].filter(Boolean).join(" | ");
-}
-
 export const observerService = {
   async getOrCreate(): Promise<Observer> {
-    await authService.ensureAnonymousSession();
+    const user = await authService.ensureAnonymousSession();
 
-    const { data, error } = await supabase.rpc("bootstrap_observer", {
-      requested_observer_code: makeObserverCode(),
-    });
+    const { data: existing, error: selectError } = await supabase
+      .from("observers")
+      .select("*")
+      .eq("user_id", user.id)
+      .maybeSingle();
 
-    if (error) {
-      throw new Error(`Observer bootstrap failed: ${describeError(error)}`);
+    if (selectError) throw selectError;
+
+    if (existing) {
+      const { data: updated, error: updateError } = await supabase
+        .from("observers")
+        .update({
+          last_seen: new Date().toISOString(),
+          total_visits: (existing.total_visits ?? 0) + 1,
+        })
+        .eq("id", existing.id)
+        .select("*")
+        .single();
+
+      if (updateError) throw updateError;
+      return updated as Observer;
     }
 
-    const observer = Array.isArray(data) ? data[0] : data;
-    if (!observer) throw new Error("Observer bootstrap returned no profile.");
-    return observer as Observer;
+    const { data: created, error: insertError } = await supabase
+      .from("observers")
+      .insert({
+        user_id: user.id,
+        observer_id: makeObserverCode(),
+        username: "Visitor",
+        clearance: "VISITOR",
+        last_seen: new Date().toISOString(),
+        total_visits: 1,
+        total_time_seconds: 0,
+        unlocked_scene: "midnight-override",
+      })
+      .select("*")
+      .single();
+
+    if (insertError) throw insertError;
+    return created as Observer;
   },
 
   async update(
@@ -52,20 +74,29 @@ export const observerService = {
       .select("*")
       .single();
 
-    if (error) throw new Error(`Observer update failed: ${describeError(error)}`);
+    if (error) throw error;
     return data as Observer;
   },
 
   async addSessionTime(observerId: string, seconds: number): Promise<void> {
     if (!Number.isFinite(seconds) || seconds <= 0) return;
 
-    const { error } = await supabase.rpc("increment_observer_time", {
-      target_observer_id: observerId,
-      seconds_to_add: Math.floor(seconds),
-    });
+    const { data: observer, error: readError } = await supabase
+      .from("observers")
+      .select("total_time_seconds")
+      .eq("id", observerId)
+      .single();
 
-    if (error) {
-      throw new Error(`Session sync failed: ${describeError(error)}`);
-    }
+    if (readError) throw readError;
+
+    const { error: updateError } = await supabase
+      .from("observers")
+      .update({
+        total_time_seconds: (observer.total_time_seconds ?? 0) + Math.floor(seconds),
+        last_seen: new Date().toISOString(),
+      })
+      .eq("id", observerId);
+
+    if (updateError) throw updateError;
   },
 };

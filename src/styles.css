@@ -408,3 +408,20 @@
 .season-layer{position:absolute;inset:0;z-index:7;pointer-events:none;overflow:hidden}.season-layer i{position:absolute;top:-30px;width:4px;height:4px;border-radius:50%;animation:seasonFall linear infinite}.season-layer span{position:absolute;right:28px;bottom:66px;font:700 .42rem monospace;letter-spacing:.22em;opacity:.28}.season-winter i{background:#d9f4ff;box-shadow:0 0 8px #bdeaff}.season-halloween i{width:2px;height:22px;border-radius:0;background:linear-gradient(#ff7a18,transparent);transform:rotate(18deg)}.season-summer{background:linear-gradient(180deg,rgba(255,120,40,.025),transparent 48%);animation:heatPulse 5s ease-in-out infinite}.season-summer i{display:none}@keyframes seasonFall{to{transform:translate3d(40px,110vh,0) rotate(220deg);opacity:.15}}@keyframes heatPulse{50%{filter:blur(.35px) saturate(1.08)}}
 .living-event{position:absolute;z-index:12;left:50%;top:24px;transform:translateX(-50%);display:flex;gap:12px;align-items:center;padding:7px 13px;border:1px solid color-mix(in srgb,var(--accent) 22%,transparent);background:rgba(2,8,18,.42);backdrop-filter:blur(10px);font:650 .48rem monospace;letter-spacing:.12em;color:#8fa9c2;opacity:.48;animation:livingEventIn .5s ease}.living-event small{color:var(--accent)}@keyframes livingEventIn{from{opacity:0;transform:translate(-50%,-8px)}}
 @media(max-width:800px){.living-event{display:none}.boot-observer{right:5vw}.cinematic-boot .boot-hardware{font-size:.68rem}}
+
+
+/* BLACKTERM AI live-service state */
+.ai-service-mode {
+  font-size: .68rem;
+  letter-spacing: .12em;
+}
+.ai-service-mode.mode-live {
+  color: #58ffb0;
+  text-shadow: 0 0 12px rgba(88, 255, 176, .6);
+}
+.ai-service-mode.mode-local {
+  color: #ffd66b;
+}
+.ai-service-mode.mode-connecting {
+  color: #62b9ff;
+}

@@ -514,15 +514,3 @@
     height: 300px;
   }
 }
-
-.noc-backend-error {
-  max-width: 900px;
-  margin: 10px 0 0;
-  padding: 9px 11px;
-  border-left: 2px solid #ff5870;
-  background: rgba(255, 88, 112, .07);
-  color: #ff8a9d !important;
-  font-size: .68rem;
-  line-height: 1.45;
-  overflow-wrap: anywhere;
-}

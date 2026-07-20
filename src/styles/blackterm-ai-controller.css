@@ -1,0 +1,312 @@
+.bt-ai-control {
+  min-height: 100%;
+  padding: 22px;
+  color: #edf7ff;
+  background:
+    radial-gradient(circle at 18% 0%, rgba(40, 135, 255, .12), transparent 34%),
+    linear-gradient(145deg, rgba(2, 9, 20, .98), rgba(2, 6, 13, .98));
+  font-family: "JetBrains Mono", "Cascadia Code", monospace;
+}
+
+.bt-ai-control button,
+.bt-ai-control textarea {
+  font: inherit;
+}
+
+.bt-ai-control-header {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 16px;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.bt-ai-core-mark {
+  width: 68px;
+  aspect-ratio: 1;
+  position: relative;
+  display: grid;
+  place-items: center;
+  border: 1px solid #4ea9ff;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(45, 154, 255, .3), transparent 64%);
+  box-shadow: 0 0 28px rgba(55, 156, 255, .2);
+}
+
+.bt-ai-core-mark span {
+  font-weight: 900;
+}
+
+.bt-ai-core-mark i {
+  position: absolute;
+  inset: 7px;
+  border: 1px dashed rgba(105, 190, 255, .55);
+  border-radius: 50%;
+  animation: bt-ai-spin 9s linear infinite;
+}
+
+.bt-ai-control-header small,
+.bt-ai-command-panel > small,
+.bt-ai-telemetry small,
+.bt-ai-log article > small {
+  color: #57b3ff;
+  letter-spacing: .14em;
+}
+
+.bt-ai-control-header h2 {
+  margin: 4px 0;
+  font-size: clamp(1.5rem, 3vw, 2.35rem);
+}
+
+.bt-ai-control-header p {
+  margin: 0;
+  color: rgba(229, 242, 255, .52);
+}
+
+.bt-ai-mode {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 13px;
+  border: 1px solid rgba(88, 255, 174, .32);
+  color: #58ffae;
+  font-size: .7rem;
+  letter-spacing: .1em;
+}
+
+.bt-ai-mode i {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: currentColor;
+  box-shadow: 0 0 12px currentColor;
+}
+
+.bt-ai-mode.mode-connecting {
+  color: #5bbcff;
+}
+
+.bt-ai-mode.mode-local-fallback {
+  color: #ffd36b;
+}
+
+.bt-ai-telemetry {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 9px;
+  margin-bottom: 14px;
+}
+
+.bt-ai-telemetry article {
+  padding: 12px;
+  border: 1px solid rgba(74, 164, 255, .13);
+  background: rgba(255, 255, 255, .018);
+}
+
+.bt-ai-telemetry strong {
+  display: block;
+  margin-top: 7px;
+  overflow: hidden;
+  color: #eef8ff;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.bt-ai-layout {
+  display: grid;
+  grid-template-columns: 205px 1fr;
+  min-height: 480px;
+  border: 1px solid rgba(70, 162, 255, .18);
+  background: rgba(0, 5, 13, .43);
+}
+
+.bt-ai-command-panel {
+  display: grid;
+  align-content: start;
+  gap: 8px;
+  padding: 14px;
+  border-right: 1px solid rgba(70, 162, 255, .16);
+}
+
+.bt-ai-command-panel > small:not(:first-child) {
+  margin-top: 13px;
+}
+
+.bt-ai-command-panel button,
+.bt-ai-suggestions button,
+.bt-ai-log article div button {
+  padding: 9px 10px;
+  border: 1px solid rgba(65, 161, 255, .34);
+  background: rgba(34, 111, 181, .08);
+  color: #dcefff;
+  cursor: pointer;
+  text-align: left;
+}
+
+.bt-ai-command-panel button:hover,
+.bt-ai-suggestions button:hover,
+.bt-ai-log article div button:hover {
+  border-color: #54b4ff;
+  background: rgba(48, 132, 210, .15);
+}
+
+.bt-ai-chat {
+  display: grid;
+  grid-template-rows: 1fr auto auto;
+  min-width: 0;
+}
+
+.bt-ai-log {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-height: 470px;
+  overflow: auto;
+  padding: 17px;
+}
+
+.bt-ai-log article {
+  width: min(82%, 780px);
+  padding: 14px;
+  border: 1px solid rgba(72, 164, 255, .19);
+  background: linear-gradient(135deg, rgba(24, 75, 123, .24), rgba(7, 22, 42, .78));
+}
+
+.bt-ai-log article.user {
+  align-self: flex-end;
+  width: auto;
+  max-width: 62%;
+  background: linear-gradient(135deg, rgba(32, 135, 226, .78), rgba(25, 101, 170, .88));
+}
+
+.bt-ai-log article p {
+  margin: 8px 0 0;
+  line-height: 1.6;
+  white-space: pre-wrap;
+}
+
+.bt-ai-log article div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-top: 11px;
+}
+
+.bt-ai-thinking i {
+  display: block;
+  width: 52%;
+  height: 4px;
+  margin-top: 10px;
+  background: linear-gradient(90deg, transparent, #52b5ff, transparent);
+  animation: bt-ai-scan 1.25s ease-in-out infinite;
+}
+
+.bt-ai-suggestions {
+  display: flex;
+  gap: 7px;
+  padding: 10px 14px;
+  overflow-x: auto;
+  border-top: 1px solid rgba(70, 162, 255, .14);
+}
+
+.bt-ai-suggestions button {
+  flex: 0 0 auto;
+  font-size: .66rem;
+}
+
+.bt-ai-input {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 9px;
+  padding: 13px;
+  border-top: 1px solid rgba(70, 162, 255, .14);
+}
+
+.bt-ai-input textarea {
+  min-height: 52px;
+  max-height: 130px;
+  resize: vertical;
+  padding: 13px;
+  border: 1px solid rgba(74, 164, 255, .3);
+  outline: none;
+  background: rgba(0, 5, 12, .72);
+  color: #eff8ff;
+}
+
+.bt-ai-input textarea:focus {
+  border-color: #52b3ff;
+  box-shadow: 0 0 16px rgba(54, 157, 255, .11);
+}
+
+.bt-ai-input button {
+  min-width: 104px;
+  border: 1px solid #56b6ff;
+  background: linear-gradient(180deg, #57b5ff, #2587dd);
+  color: #03101c;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.bt-ai-input button:disabled {
+  opacity: .45;
+  cursor: not-allowed;
+}
+
+@keyframes bt-ai-spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes bt-ai-scan {
+  0%, 100% { transform: translateX(0); opacity: .35; }
+  50% { transform: translateX(80%); opacity: 1; }
+}
+
+@media (max-width: 820px) {
+  .bt-ai-control-header {
+    grid-template-columns: auto 1fr;
+  }
+
+  .bt-ai-mode {
+    grid-column: 1 / -1;
+    justify-self: start;
+  }
+
+  .bt-ai-telemetry {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .bt-ai-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .bt-ai-command-panel {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    border-right: 0;
+    border-bottom: 1px solid rgba(70, 162, 255, .16);
+  }
+
+  .bt-ai-command-panel > small {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 540px) {
+  .bt-ai-control {
+    padding: 12px;
+  }
+
+  .bt-ai-telemetry,
+  .bt-ai-command-panel {
+    grid-template-columns: 1fr;
+  }
+
+  .bt-ai-input {
+    grid-template-columns: 1fr;
+  }
+
+  .bt-ai-log article,
+  .bt-ai-log article.user {
+    width: auto;
+    max-width: 92%;
+  }
+}
