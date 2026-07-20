@@ -14,10 +14,12 @@
         "openai": "^6.48.0",
         "react": "latest",
         "react-dom": "latest",
-        "typescript": "latest",
         "vite": "latest"
     },
     "engines": {
         "node": "22.x"
+    },
+    "devDependencies": {
+        "typescript": "^5.9.3"
     }
 }
