@@ -5,7 +5,7 @@ import {
   projects,
   skills,
   socials,
-} from "../src/data/portfolio";
+} from "../src/data/portfolio.js";
 
 type HistoryItem = {
   role: "user" | "assistant";
@@ -185,47 +185,22 @@ export default async function handler(
     sendJson(response, {
       online: Boolean(apiKey),
       service: "BLACKTERM AI",
-      debug: {
-        hasKey: Boolean(apiKey),
-        keyLength: apiKey?.length ?? 0,
-        vercelEnvironment:
-          process.env.VERCEL_ENV ?? "unknown",
-        nodeEnvironment:
-          process.env.NODE_ENV ?? "unknown",
-      },
     });
 
     return;
   }
 
   if (request.method !== "POST") {
-    sendJson(
-      response,
-      {
-        error: "Method not allowed.",
-      },
-      405,
-    );
-
+    sendJson(response, { error: "Method not allowed." }, 405);
     return;
   }
 
   if (!apiKey) {
     sendJson(
       response,
-      {
-        error: "OPENAI_API_KEY is not configured.",
-        debug: {
-          hasKey: false,
-          vercelEnvironment:
-            process.env.VERCEL_ENV ?? "unknown",
-          nodeEnvironment:
-            process.env.NODE_ENV ?? "unknown",
-        },
-      },
+      { error: "OPENAI_API_KEY is not configured." },
       503,
     );
-
     return;
   }
 
@@ -240,7 +215,6 @@ export default async function handler(
       },
       429,
     );
-
     return;
   }
 
@@ -249,40 +223,19 @@ export default async function handler(
   try {
     body = parseBody(request.body);
   } catch {
-    sendJson(
-      response,
-      {
-        error: "Invalid JSON request.",
-      },
-      400,
-    );
-
+    sendJson(response, { error: "Invalid JSON request." }, 400);
     return;
   }
 
   const message = body.message?.trim();
 
   if (!message) {
-    sendJson(
-      response,
-      {
-        error: "A message is required.",
-      },
-      400,
-    );
-
+    sendJson(response, { error: "A message is required." }, 400);
     return;
   }
 
   if (message.length > 1_500) {
-    sendJson(
-      response,
-      {
-        error: "Message is too long.",
-      },
-      400,
-    );
-
+    sendJson(response, { error: "Message is too long." }, 400);
     return;
   }
 
@@ -316,8 +269,7 @@ export default async function handler(
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          model:
-            process.env.OPENAI_MODEL || "gpt-5-mini",
+          model: process.env.OPENAI_MODEL || "gpt-5-mini",
           instructions,
           input: [
             ...history,
@@ -348,12 +300,9 @@ export default async function handler(
 
       sendJson(
         response,
-        {
-          error: upstreamMessage,
-        },
+        { error: upstreamMessage },
         openaiResponse.status,
       );
-
       return;
     }
 
@@ -362,24 +311,15 @@ export default async function handler(
     if (!text) {
       sendJson(
         response,
-        {
-          error:
-            "The intelligence core returned no text.",
-        },
+        { error: "The intelligence core returned no text." },
         502,
       );
-
       return;
     }
 
-    sendJson(response, {
-      text,
-    });
+    sendJson(response, { text });
   } catch (error) {
-    console.error(
-      "BLACKTERM AI request crashed:",
-      error,
-    );
+    console.error("BLACKTERM AI request crashed:", error);
 
     sendJson(
       response,

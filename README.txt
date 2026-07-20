@@ -1,10 +1,22 @@
-BLACKTERM OS v14.2 — Evolving Midnight Override
+BLACKTERM Vercel API Fix
 
-Copy the included src folder into the root of your current project.
-Then run:
-  npm.cmd run build
-  git add .
-  git commit -m "Add evolving Midnight Override scene"
-  git push
+Drag the included "api" folder into the root of your BLACKTERM project and
+allow Windows to replace the existing files:
 
-The scene evolves as visitors spend time and open apps. Progress is stored for the browser session.
+api/
+  ai.ts
+  blackterm-ai.ts
+
+The important production fix is the explicit ESM extension:
+
+  from "../src/data/portfolio.js";
+
+After replacing the files, run:
+
+  npx tsc --noEmit
+  npm run build
+  git add api/ai.ts api/blackterm-ai.ts
+  git commit -m "fix: resolve portfolio module in Vercel AI functions"
+  git push origin main
+
+Do not place OPENAI_API_KEY inside either source file.
