@@ -1,0 +1,270 @@
+/* BLACKTERM cinematic achievement feed */
+.operator-achievement-feed {
+  --feed-accent: #ffc95a;
+  position: absolute;
+  top: 58px;
+  right: 12px;
+  z-index: 18;
+  display: grid;
+  grid-template-columns: 54px minmax(0, 1fr);
+  width: min(270px, calc(100vw - 32px));
+  min-height: 78px;
+  gap: 11px;
+  align-items: center;
+  padding: 11px 13px;
+  overflow: hidden;
+  color: #eaf4ff;
+  border: 1px solid color-mix(in srgb, var(--feed-accent) 55%, transparent);
+  border-radius: 10px;
+  background:
+    linear-gradient(135deg, rgba(9, 29, 51, 0.95), rgba(5, 14, 28, 0.97));
+  box-shadow:
+    0 0 30px color-mix(in srgb, var(--feed-accent) 14%, transparent),
+    inset 0 0 28px rgba(80, 156, 255, 0.05);
+  backdrop-filter: blur(12px);
+  cursor: pointer;
+  text-align: left;
+  animation: operator-feed-enter 520ms cubic-bezier(.2,.8,.2,1) both;
+}
+
+.operator-achievement-feed::before {
+  position: absolute;
+  height: 2px;
+  content: "";
+  inset: 0 0 auto;
+  background: linear-gradient(90deg, transparent, var(--feed-accent), transparent);
+  opacity: 0.8;
+}
+
+.operator-achievement-feed::after {
+  position: absolute;
+  width: 90px;
+  content: "";
+  background: radial-gradient(circle, color-mix(in srgb, var(--feed-accent) 20%, transparent), transparent 70%);
+  inset: -35px -25px auto auto;
+  aspect-ratio: 1;
+  pointer-events: none;
+}
+
+.operator-achievement-feed:hover {
+  transform: translateY(-2px);
+  border-color: var(--feed-accent);
+  box-shadow:
+    0 0 42px color-mix(in srgb, var(--feed-accent) 24%, transparent),
+    inset 0 0 32px rgba(80, 156, 255, 0.08);
+}
+
+.operator-achievement-feed.accent-cyan {
+  --feed-accent: #58c7ff;
+}
+
+.operator-achievement-feed.accent-green {
+  --feed-accent: #63ffc6;
+}
+
+.operator-achievement-feed.accent-violet {
+  --feed-accent: #a784ff;
+}
+
+.operator-achievement-feed__badge {
+  display: grid;
+  width: 54px;
+  height: 54px;
+  place-items: center;
+  color: var(--feed-accent);
+  border: 1px solid color-mix(in srgb, var(--feed-accent) 72%, transparent);
+  clip-path: polygon(50% 0, 92% 24%, 92% 76%, 50% 100%, 8% 76%, 8% 24%);
+  background: linear-gradient(145deg, rgba(18, 43, 72, 0.98), rgba(7, 17, 31, 0.98));
+  box-shadow: 0 0 20px color-mix(in srgb, var(--feed-accent) 22%, transparent);
+  font-size: 17px;
+  font-weight: 1000;
+  letter-spacing: 0.08em;
+}
+
+.operator-achievement-feed__copy {
+  display: grid;
+  min-width: 0;
+  gap: 3px;
+}
+
+.operator-achievement-feed__copy small {
+  overflow: hidden;
+  color: #63bdff;
+  font-size: 7px;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.operator-achievement-feed__copy strong {
+  overflow: hidden;
+  color: #f2f7ff;
+  font-size: 12px;
+  line-height: 1.2;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.operator-achievement-feed__copy > span {
+  overflow: hidden;
+  color: #91a7bb;
+  font-size: 8px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.operator-achievement-feed__status {
+  grid-column: 2;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 8px;
+  align-items: center;
+  color: #63ffc6;
+  font-size: 7px;
+  font-weight: 1000;
+  letter-spacing: 0.08em;
+}
+
+.operator-achievement-feed__status i {
+  overflow: hidden;
+  height: 3px;
+  background:
+    linear-gradient(90deg, var(--feed-accent) 83%, rgba(91, 124, 150, 0.28) 83%);
+  box-shadow: 0 0 9px color-mix(in srgb, var(--feed-accent) 45%, transparent);
+}
+
+.achievement-unlock-toast {
+  position: fixed;
+  z-index: 30000;
+  width: min(430px, calc(100vw - 28px));
+  right: 22px;
+  bottom: 78px;
+  padding: 16px;
+  color: #eaf4ff;
+  border: 1px solid rgba(255, 201, 90, 0.62);
+  background:
+    radial-gradient(circle at 100% 0, rgba(255, 201, 90, 0.12), transparent 38%),
+    linear-gradient(140deg, rgba(8, 28, 49, 0.98), rgba(4, 12, 24, 0.99));
+  box-shadow:
+    0 24px 70px rgba(0, 0, 0, 0.52),
+    0 0 38px rgba(255, 201, 90, 0.17);
+  backdrop-filter: blur(14px);
+  cursor: pointer;
+  text-align: left;
+  animation: achievement-toast-in 720ms cubic-bezier(.15,.8,.2,1) both;
+}
+
+.achievement-unlock-toast::before {
+  position: absolute;
+  width: 4px;
+  content: "";
+  background: #ffc95a;
+  box-shadow: 0 0 18px #ffc95a;
+  inset: 0 auto 0 0;
+}
+
+.achievement-unlock-toast > small {
+  color: #ffc95a;
+  font-size: 9px;
+  font-weight: 1000;
+  letter-spacing: 0.16em;
+}
+
+.achievement-unlock-toast > div {
+  display: grid;
+  grid-template-columns: 62px minmax(0, 1fr);
+  gap: 14px;
+  align-items: center;
+  margin: 14px 0;
+}
+
+.achievement-unlock-toast > div > span {
+  display: grid;
+  width: 62px;
+  height: 62px;
+  place-items: center;
+  color: #ffc95a;
+  border: 1px solid rgba(255, 201, 90, 0.75);
+  clip-path: polygon(50% 0, 92% 24%, 92% 76%, 50% 100%, 8% 76%, 8% 24%);
+  background: rgba(9, 27, 48, 0.96);
+  font-size: 18px;
+  font-weight: 1000;
+}
+
+.achievement-unlock-toast strong {
+  display: block;
+  color: #f5f8ff;
+  font-size: 17px;
+  line-height: 1.25;
+}
+
+.achievement-unlock-toast p {
+  margin: 5px 0 0;
+  color: #97adbf;
+  font-size: 11px;
+}
+
+.achievement-unlock-toast footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding-top: 11px;
+  border-top: 1px solid rgba(97, 172, 235, 0.18);
+  color: #6affc6;
+  font-size: 8px;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+}
+
+.achievement-unlock-toast footer b {
+  color: #62beff;
+}
+
+@keyframes operator-feed-enter {
+  from {
+    opacity: 0;
+    transform: translateX(28px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+@keyframes achievement-toast-in {
+  0% {
+    opacity: 0;
+    transform: translateX(115%) scale(0.94);
+  }
+  62% {
+    opacity: 1;
+    transform: translateX(-10px) scale(1.01);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+@media (max-width: 900px) {
+  .operator-achievement-feed {
+    top: 54px;
+    right: 10px;
+    width: 230px;
+  }
+}
+
+@media (max-width: 620px) {
+  .operator-achievement-feed {
+    top: auto;
+    right: 12px;
+    bottom: 72px;
+    width: 220px;
+  }
+
+  .achievement-unlock-toast {
+    right: 12px;
+    bottom: 72px;
+  }
+}

@@ -1,3 +1,5 @@
+import { achievementRecords } from "../src/data/achievements.js";
+import { credentialRecords } from "../src/data/credentials.js";
 import {
   certifications,
   experience,
@@ -144,6 +146,8 @@ const portfolioContext = JSON.stringify(
     certifications,
     experience,
     socials,
+    credentialRecords,
+    achievementRecords,
   },
   null,
   2,

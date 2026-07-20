@@ -6,7 +6,6 @@ import {
 } from "../services/networkOperationsService";
 
 type AppTarget =
-  | "achievements"
   | "command"
   | "noc"
   | "observer"
@@ -248,22 +247,6 @@ export default function BlackTermAIController({
   }
 
   function runLocalCommand(query: string): boolean {
-    if (/\b(achievement|achievements|milestone|milestones|trophy|trophies)\b/i.test(query)) {
-      openApp("achievements");
-      notify("Achievement Wall opened.");
-
-      addMessage({
-        role: "assistant",
-        content:
-          "Achievement Wall opened with Tyler's career, cybersecurity, training, builder, and platform milestones.",
-        category: "OPERATOR ACHIEVEMENTS",
-        actions: [{ label: "Open Achievement Wall", app: "achievements" }],
-      });
-
-      setMode("LIVE AI");
-      return true;
-    }
-
     const command = detectCommand(query);
 
     if (command) {

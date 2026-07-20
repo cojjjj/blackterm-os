@@ -1,22 +1,34 @@
-BLACKTERM Vercel API Fix
+BLACKTERM CINEMATIC ACHIEVEMENT ENGINE
 
-Drag the included "api" folder into the root of your BLACKTERM project and
-allow Windows to replace the existing files:
+FILES TO REPLACE / ADD
 
-api/
-  ai.ts
-  blackterm-ai.ts
+1. Replace:
+   src\App.tsx
 
-The important production fix is the explicit ESM extension:
+2. Add:
+   src\components\OperatorAchievementFeed.tsx
 
-  from "../src/data/portfolio.js";
+3. Add:
+   src\styles\operator-achievement-feed.css
 
-After replacing the files, run:
+FEATURES
 
-  npx tsc --noEmit
-  npm run build
-  git add api/ai.ts api/blackterm-ai.ts
-  git commit -m "fix: resolve portfolio module in Vercel AI functions"
-  git push origin main
+- Rotating operator achievement feed
+- Context-aware suggestions when Resume, GitHub, Projects, TryHackMe,
+  or Credential Vault is active
+- Cinematic achievement-unlocked notification after desktop startup
+- One startup notification per browser session
+- Click either panel to open Achievement Wall
+- Responsive desktop and mobile positioning
 
-Do not place OPENAI_API_KEY inside either source file.
+TEST
+
+npx tsc --noEmit
+npm run build
+vercel dev
+
+PUSH LIVE
+
+git add .
+git commit -m "feat: add cinematic achievement notification engine"
+git push origin main
