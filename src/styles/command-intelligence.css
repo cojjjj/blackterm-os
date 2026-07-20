@@ -1,0 +1,325 @@
+.command-intelligence {
+  min-height: 100%;
+  padding: 28px;
+  color: #f5f7ff;
+  background:
+    radial-gradient(circle at 20% 0%, rgba(118, 58, 255, .13), transparent 34%),
+    radial-gradient(circle at 82% 18%, rgba(0, 146, 255, .1), transparent 31%),
+    linear-gradient(145deg, #05030d, #030914 65%, #02050b);
+  font-family: "JetBrains Mono", "Cascadia Code", monospace;
+}
+
+.command-header,
+.command-mission > header,
+.command-transcript > header,
+.command-actions > header,
+.command-mission footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.command-header {
+  margin-bottom: 20px;
+}
+
+.command-header small,
+.command-summary-grid small,
+.command-mission header small,
+.command-transcript header small,
+.command-actions header small,
+.mission-objective small,
+.command-lower-grid small {
+  color: var(--accent, #7b8cff);
+  letter-spacing: .15em;
+}
+
+.command-header h1 {
+  margin: 7px 0;
+  font-size: clamp(2rem, 4vw, 3.6rem);
+}
+
+.command-header p,
+.command-summary-grid span,
+.mission-summary,
+.mission-objective p {
+  color: rgba(237, 241, 255, .58);
+}
+
+.command-threat {
+  min-width: 220px;
+  padding: 15px 17px;
+  border: 1px solid rgba(86, 205, 255, .35);
+  background: rgba(14, 66, 98, .12);
+}
+
+.command-threat span,
+.command-threat small {
+  display: block;
+}
+
+.command-threat strong {
+  display: block;
+  margin: 7px 0;
+  font-size: 1.5rem;
+  color: #5fd4ff;
+}
+
+.command-threat.threat-high strong,
+.command-threat.threat-critical strong {
+  color: #ff5578;
+}
+
+.command-summary-grid,
+.command-lower-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.command-summary-grid {
+  margin-bottom: 18px;
+}
+
+.command-summary-grid article,
+.command-lower-grid article {
+  padding: 17px;
+  border: 1px solid rgba(120, 139, 255, .16);
+  background: rgba(255, 255, 255, .022);
+}
+
+.command-summary-grid strong {
+  display: block;
+  margin: 8px 0;
+  font-size: 1.7rem;
+}
+
+.command-main-grid {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 18px;
+}
+
+.command-mission,
+.command-transcript,
+.command-actions {
+  border: 1px solid rgba(120, 139, 255, .17);
+  background: rgba(4, 7, 17, .72);
+  box-shadow: inset 0 0 40px rgba(107, 83, 255, .025);
+}
+
+.command-mission {
+  padding: 22px;
+}
+
+.command-mission h2 {
+  margin: 5px 0 0;
+  font-size: clamp(1.5rem, 3vw, 2.5rem);
+}
+
+.command-mission > header > span {
+  padding: 8px 10px;
+  border: 1px solid rgba(255, 90, 125, .42);
+  color: #ff6686;
+}
+
+.mission-code {
+  display: flex;
+  justify-content: space-between;
+  margin: 20px 0 15px;
+  padding: 12px;
+  border-left: 3px solid var(--accent, #7b8cff);
+  background: rgba(255, 255, 255, .025);
+}
+
+.mission-code span {
+  color: var(--accent, #7b8cff);
+}
+
+.mission-code b {
+  color: rgba(255, 255, 255, .5);
+}
+
+.mission-summary {
+  font-size: 1rem;
+  line-height: 1.7;
+}
+
+.mission-objective {
+  margin: 18px 0;
+  padding: 17px;
+  border: 1px solid rgba(255, 255, 255, .08);
+  background: rgba(0, 0, 0, .17);
+}
+
+.mission-objective p {
+  margin-bottom: 0;
+  line-height: 1.6;
+}
+
+.mission-progress {
+  margin: 20px 0;
+}
+
+.mission-progress > div:first-child {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-size: .72rem;
+}
+
+.mission-progress > div:last-child {
+  height: 7px;
+  background: rgba(255, 255, 255, .07);
+}
+
+.mission-progress i {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, #704cff, #4ab8ff);
+  box-shadow: 0 0 16px #655fff;
+}
+
+.command-mission footer {
+  align-items: flex-end;
+  flex-wrap: wrap;
+}
+
+.command-mission footer small,
+.command-mission footer strong {
+  display: block;
+}
+
+.command-mission footer strong {
+  margin-top: 5px;
+  color: #60d8ff;
+}
+
+.command-intelligence button {
+  padding: 10px 13px;
+  border: 1px solid rgba(112, 129, 255, .48);
+  background: rgba(76, 73, 168, .08);
+  color: inherit;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.command-intelligence button:hover {
+  border-color: #7d88ff;
+  background: rgba(89, 89, 195, .16);
+}
+
+.command-intelligence button:disabled {
+  opacity: .5;
+  cursor: not-allowed;
+}
+
+.command-side {
+  display: grid;
+  gap: 18px;
+  align-content: start;
+}
+
+.command-transcript,
+.command-actions {
+  padding: 17px;
+}
+
+.command-transcript header span {
+  color: #4cffaa;
+  font-size: .68rem;
+}
+
+.command-transcript > div {
+  margin-top: 13px;
+  display: grid;
+  gap: 8px;
+}
+
+.command-transcript p {
+  margin: 0;
+  padding: 9px;
+  background: rgba(255, 255, 255, .018);
+  color: rgba(236, 241, 255, .66);
+  font-size: .72rem;
+}
+
+.command-transcript p span {
+  margin-right: 9px;
+  color: var(--accent, #7b8cff);
+}
+
+.command-actions {
+  display: grid;
+  gap: 9px;
+}
+
+.command-actions header {
+  margin-bottom: 4px;
+}
+
+.command-lower-grid {
+  margin-top: 18px;
+}
+
+.command-lower-grid article {
+  position: relative;
+}
+
+.command-lower-grid strong {
+  display: block;
+  margin-top: 8px;
+  color: #4cffaa;
+}
+
+.command-lower-grid i {
+  position: absolute;
+  right: 14px;
+  top: 17px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #4cffaa;
+  box-shadow: 0 0 14px #4cffaa;
+}
+
+.command-empty,
+.command-offline {
+  display: grid;
+  place-items: center;
+  min-height: 300px;
+  color: rgba(255, 255, 255, .5);
+}
+
+@media (max-width: 950px) {
+  .command-main-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .command-side {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 700px) {
+  .command-intelligence {
+    padding: 16px;
+  }
+
+  .command-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .command-summary-grid,
+  .command-lower-grid,
+  .command-side {
+    grid-template-columns: 1fr;
+  }
+
+  .command-mission footer {
+    align-items: stretch;
+    flex-direction: column;
+  }
+}

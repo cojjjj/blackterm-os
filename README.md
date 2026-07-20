@@ -1,28 +1,52 @@
-# BLACKTERM OS — Recruiter Mode
+# BLACKTERM Live Backend v1
 
-Recruiter Mode adds a six-step guided tour designed for hiring managers and interviewers.
+This patch makes the existing Supabase backend drive the Network Operations Center.
 
-## Included
+## What changes
 
-- Recruiter-tour button on the login screen
-- Recruiter-tour button in the desktop Quick Access panel
-- Six guided stages covering Tyler, the Home Lab, Incident Engine, Malware Sandbox, projects/training, and contact
-- Automatic opening of the application connected to each stage
-- Back, Next, Pause, Skip, Exit, keyboard navigation, and progress tracking
-- Responsive BLACKTERM-styled overlay
-- Completed-tour state stored in localStorage
+- Presence heartbeat starts globally when BLACKTERM authenticates
+- Heartbeat refreshes every 30 seconds
+- Observers appear online without opening the NOC first
+- Secure database RPC validates the current authenticated observer
+- NOC counters come from real `observers`, visits, transmissions, and presence rows
+- Realtime is enabled for presence and transmissions
+- Backend errors now include the actual Supabase message
 
-## Build
+## Install
 
-```powershell
-npm.cmd install
-npm.cmd run build
+1. Copy these files into the existing project:
+
+```text
+src/context/ObserverNetworkContext.tsx
+src/services/networkOperationsService.ts
 ```
 
-## Deploy
+2. Replace the existing versions when prompted.
+
+3. Run this migration in Supabase SQL Editor:
+
+```text
+supabase/migrations/005_live_backend.sql
+```
+
+4. Restart Vite and clear its module cache:
 
 ```powershell
-git add .
-git commit -m "Add Recruiter Mode guided portfolio tour"
-git push
+Ctrl + C
+Remove-Item -Recurse -Force .\node_modules\.vite -ErrorAction SilentlyContinue
+npm run dev
 ```
+
+5. Hard-refresh the browser with `Ctrl + Shift + R`.
+
+## Expected result
+
+After the Observer Network boot completes:
+
+- Active Observers should show at least `1`
+- Total Observers should show the number of observer rows
+- Network Connections should show the sum of observer visits
+- Live Presence should show the current Observer ID
+- Seeded transmissions should appear in the NOC
+
+Open a private/incognito browser window to create a second anonymous observer and watch the live count increase.

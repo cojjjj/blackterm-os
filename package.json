@@ -1,24 +1,22 @@
 {
-    "name":  "blackterm-os-portfolio",
-    "private":  true,
-    "version":  "8.0.0",
-    "type":  "module",
-    "scripts":  {
-                    "dev":  "vite",
-                    "build":  "vite build",
-                    "preview":  "vite preview"
-                },
-    "dependencies":  {
-                         "@vitejs/plugin-react":  "latest",
-                         "vite":  "latest",
-                         "typescript":  "latest",
-                         "react":  "latest",
-                         "react-dom":  "latest"
-                     },
-    "devDependencies":  {
-
-                        },
-    "engines":  {
-                    "node":  "22.x"
-                }
+    "name": "blackterm-os-portfolio",
+    "private": true,
+    "version": "8.0.0",
+    "type": "module",
+    "scripts": {
+        "dev": "vite",
+        "build": "vite build",
+        "preview": "vite preview"
+    },
+    "dependencies": {
+        "@supabase/supabase-js": "^2.110.7",
+        "@vitejs/plugin-react": "latest",
+        "react": "latest",
+        "react-dom": "latest",
+        "typescript": "latest",
+        "vite": "latest"
+    },
+    "engines": {
+        "node": "22.x"
+    }
 }
