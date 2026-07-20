@@ -6,6 +6,7 @@ import {
 } from "../services/networkOperationsService";
 
 type AppTarget =
+  | "operatorlog"
   | "achievements"
   | "command"
   | "noc"
@@ -72,6 +73,28 @@ const COMMANDS: Array<{
   title: string;
   aliases: string[];
 }> = [
+  {
+    app: "operatorlog",
+    title: "Operator Timeline",
+    aliases: [
+      "operator timeline",
+      "living operator profile",
+      "career milestones",
+      "professional timeline",
+      "operator log",
+    ],
+  },
+  {
+    app: "achievements",
+    title: "Achievement Wall",
+    aliases: [
+      "achievement wall",
+      "achievements",
+      "milestones",
+      "trophies",
+      "operator achievements",
+    ],
+  },
   { app: "resume", title: "Resume.pdf", aliases: ["resume", "cv"] },
   {
     app: "projects",
@@ -248,22 +271,6 @@ export default function BlackTermAIController({
   }
 
   function runLocalCommand(query: string): boolean {
-    if (/\b(achievement|achievements|milestone|milestones|trophy|trophies)\b/i.test(query)) {
-      openApp("achievements");
-      notify("Achievement Wall opened.");
-
-      addMessage({
-        role: "assistant",
-        content:
-          "Achievement Wall opened with Tyler's career, cybersecurity, training, builder, and platform milestones.",
-        category: "OPERATOR ACHIEVEMENTS",
-        actions: [{ label: "Open Achievement Wall", app: "achievements" }],
-      });
-
-      setMode("LIVE AI");
-      return true;
-    }
-
     const command = detectCommand(query);
 
     if (command) {

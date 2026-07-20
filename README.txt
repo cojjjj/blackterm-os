@@ -1,34 +1,32 @@
-BLACKTERM CINEMATIC ACHIEVEMENT ENGINE
+BLACKTERM LIVING OPERATOR PROFILE
 
-FILES TO REPLACE / ADD
-
-1. Replace:
-   src\App.tsx
-
-2. Add:
-   src\components\OperatorAchievementFeed.tsx
-
-3. Add:
-   src\styles\operator-achievement-feed.css
+This upgrade adds a persistent, editable professional timeline that evolves
+alongside Tyler's career.
 
 FEATURES
+- Built-in career, certification, project, platform, and training milestones
+- Verified XP and operator level
+- Timeline filters
+- Planned future objectives
+- Add new milestones directly from the UI
+- Custom records persist in localStorage
+- Desktop app entry and Quick Access button
+- Fully responsive BLACKTERM styling
 
-- Rotating operator achievement feed
-- Context-aware suggestions when Resume, GitHub, Projects, TryHackMe,
-  or Credential Vault is active
-- Cinematic achievement-unlocked notification after desktop startup
-- One startup notification per browser session
-- Click either panel to open Achievement Wall
-- Responsive desktop and mobile positioning
+INSTALL
+1. Extract into the BLACKTERM project root.
+2. Replace/add:
+   src\App.tsx
+   src\components\LivingOperatorProfile.tsx
+   src\data\operator-events.ts
+   src\styles\living-operator-profile.css
 
 TEST
-
 npx tsc --noEmit
 npm run build
 vercel dev
 
 PUSH LIVE
-
 git add .
-git commit -m "feat: add cinematic achievement notification engine"
+git commit -m "feat: add living operator profile"
 git push origin main
